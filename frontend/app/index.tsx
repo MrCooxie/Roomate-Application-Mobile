@@ -1,0 +1,223 @@
+import { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+  Dimensions,
+} from "react-native";
+import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import { APARTMENTS, Apartment } from "../data/apartments";
+import { ROOMMATES, Roommate } from "../data/roommates";
+import "../global.css";
+
+const { width } = Dimensions.get("window");
+
+// Roommate data imported from ../data/roommates
+// Apartment data imported from ../data/apartments
+
+// ─── Shared components ───────────────────────────────────────────────
+
+function CompatibilityBadge({ value }: { value: number }) {
+  const bgColor = value >= 70 ? "bg-emerald-400" : "bg-yellow-600/80";
+
+  return (
+    <View
+      className={`absolute top-3 right-3 z-10 h-12 w-12 items-center justify-center rounded-full ${bgColor}`}
+    >
+      <Text className="text-sm font-bold text-white">{value}%</Text>
+    </View>
+  );
+}
+
+// ─── Roommate card ───────────────────────────────────────────────────
+
+function RoommateCard({ roommate, onPress }: { roommate: Roommate; onPress: () => void }) {
+  const [liked, setLiked] = useState(false);
+
+  return (
+    <TouchableOpacity onPress={onPress} activeOpacity={0.8} className="mb-2 border-b border-gray-200 pb-4">
+      <Text className="mb-2 text-xl font-bold text-black">
+        {roommate.name}, {roommate.age}
+      </Text>
+
+      <View className="relative mb-3 overflow-hidden rounded-2xl">
+        <CompatibilityBadge value={roommate.compatibility} />
+        <Image
+          source={roommate.image}
+          className="w-full rounded-2xl"
+          style={{ height: width - 64, resizeMode: "cover" }}
+        />
+      </View>
+
+      <View className="flex-row items-end justify-between">
+        <View>
+          <Text className="text-base text-gray-600">{roommate.city}</Text>
+          <Text className="text-base font-medium text-gray-800">
+            {roommate.university}
+          </Text>
+        </View>
+        <TouchableOpacity onPress={(e) => { e.stopPropagation(); setLiked(!liked); }}>
+          <Ionicons
+            name={liked ? "heart" : "heart-outline"}
+            size={26}
+            color={liked ? "#f87171" : "#9ca3af"}
+          />
+        </TouchableOpacity>
+      </View>
+    </TouchableOpacity>
+  );
+}
+
+// ─── Apartment card ──────────────────────────────────────────────────
+
+function ApartmentCard({ apartment, onPress }: { apartment: Apartment; onPress: () => void }) {
+  const [liked, setLiked] = useState(false);
+
+  return (
+    <TouchableOpacity onPress={onPress} activeOpacity={0.8} className="mb-2 border-b border-gray-200 pb-4">
+      <Text className="mb-2 text-xl font-bold text-black">
+        {apartment.address}
+      </Text>
+
+      <View className="relative mb-3 overflow-hidden rounded-2xl">
+        <Image
+          source={apartment.image}
+          className="w-full rounded-2xl"
+          style={{ height: width - 64, resizeMode: "cover" }}
+        />
+      </View>
+
+      <View className="flex-row items-end justify-between">
+        <View>
+          <Text className="text-base text-gray-600">{apartment.priceLabel}</Text>
+          <Text className="text-base font-medium text-gray-800">
+            Up to {apartment.maxTenants} tenants
+          </Text>
+        </View>
+        <TouchableOpacity onPress={(e) => { e.stopPropagation(); setLiked(!liked); }}>
+          <Ionicons
+            name={liked ? "heart" : "heart-outline"}
+            size={26}
+            color={liked ? "#f87171" : "#9ca3af"}
+          />
+        </TouchableOpacity>
+      </View>
+    </TouchableOpacity>
+  );
+}
+
+// ─── Main screen ─────────────────────────────────────────────────────
+
+type Tab = "Roommates" | "Apartments";
+
+export default function Home() {
+  const [activeTab, setActiveTab] = useState<Tab>("Roommates");
+  const router = useRouter();
+
+  const [roommatesCache, setRoommatesCache] = useState<Roommate[] | null>(null);
+  const [apartmentsCache, setApartmentsCache] = useState<Apartment[] | null>(null);
+  const [isFetchingRoommates, setIsFetchingRoommates] = useState(false);
+  const [isFetchingApartments, setIsFetchingApartments] = useState(false);
+
+  useEffect(() => {
+    if (activeTab === "Roommates" && roommatesCache === null && !isFetchingRoommates) {
+      setIsFetchingRoommates(true);
+      fetch("x")
+        .then((res) => res.json())
+        .then((data) => setRoommatesCache(data))
+        .catch((err) => console.error("Failed to fetch roommates:", err))
+        .finally(() => setIsFetchingRoommates(false));
+    } else if (activeTab === "Apartments" && apartmentsCache === null && !isFetchingApartments) {
+      setIsFetchingApartments(true);
+      fetch("x")
+        .then((res) => res.json())
+        .then((data) => setApartmentsCache(data))
+        .catch((err) => console.error("Failed to fetch apartments:", err))
+        .finally(() => setIsFetchingApartments(false));
+    }
+  }, [activeTab, roommatesCache, apartmentsCache, isFetchingRoommates, isFetchingApartments]);
+
+  const displayRoommates = roommatesCache || ROOMMATES;
+  const displayApartments = apartmentsCache || APARTMENTS;
+
+  return (
+    <View className="flex-1 bg-white">
+      <ScrollView
+        className="flex-1 px-5"
+        contentContainerStyle={{ paddingTop: 60, paddingBottom: 100 }}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Title – changes based on active tab */}
+        <Text className="mb-5 text-center text-2xl font-bold text-black">
+          {activeTab === "Roommates" ? "Find roommates" : "Find apartments"}
+        </Text>
+
+        {/* Tabs */}
+        <View className="mb-6 flex-row gap-3">
+          <TouchableOpacity
+            onPress={() => setActiveTab("Roommates")}
+            className={`flex-1 items-center rounded-full border py-3 ${activeTab === "Roommates"
+                ? "border-emerald-400 bg-emerald-400"
+                : "border-gray-300 bg-white"
+              }`}
+          >
+            <Text
+              className={`text-base font-semibold ${activeTab === "Roommates" ? "text-white" : "text-gray-700"
+                }`}
+            >
+              Roommates
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => setActiveTab("Apartments")}
+            className={`flex-1 items-center rounded-full border py-3 ${activeTab === "Apartments"
+                ? "border-emerald-400 bg-emerald-400"
+                : "border-gray-300 bg-white"
+              }`}
+          >
+            <Text
+              className={`text-base font-semibold ${activeTab === "Apartments" ? "text-white" : "text-gray-700"
+                }`}
+            >
+              Apartments
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Content – conditionally render based on active tab */}
+        {activeTab === "Roommates"
+          ? displayRoommates.map((roommate) => (
+              <RoommateCard
+                key={roommate.id}
+                roommate={roommate}
+                onPress={() => router.push(`/roommate/${roommate.id}`)}
+              />
+            ))
+          : displayApartments.map((apartment) => (
+              <ApartmentCard
+                key={apartment.id}
+                apartment={apartment}
+                onPress={() => router.push(`/apartment/${apartment.id}`)}
+              />
+            ))}
+      </ScrollView>
+
+      {/* Bottom Navigation Bar */}
+      <View className="absolute bottom-0 left-0 right-0 flex-row items-center justify-around border-t border-gray-200 bg-white pb-6 pt-3">
+        <TouchableOpacity className="items-center">
+          <Ionicons name="home" size={26} color="#111827" />
+        </TouchableOpacity>
+        <TouchableOpacity className="items-center" onPress={() => router.push("/chat" as any)}>
+          <Ionicons name="chatbubble" size={26} color="#9ca3af" />
+        </TouchableOpacity>
+        <TouchableOpacity className="items-center" onPress={() => router.push("/settings" as any)}>
+          <Ionicons name="settings-sharp" size={26} color="#9ca3af" />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+}
