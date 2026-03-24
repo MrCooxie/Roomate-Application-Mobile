@@ -123,20 +123,36 @@ export default function Home() {
   const [isFetchingApartments, setIsFetchingApartments] = useState(false);
 
   useEffect(() => {
-    if (activeTab === "Roommates" && roommatesCache === null && !isFetchingRoommates) {
+    const fetchRoommates = async () => {
       setIsFetchingRoommates(true);
-      fetch("x")
-        .then((res) => res.json())
-        .then((data) => setRoommatesCache(data))
-        .catch((err) => console.error("Failed to fetch roommates:", err))
-        .finally(() => setIsFetchingRoommates(false));
-    } else if (activeTab === "Apartments" && apartmentsCache === null && !isFetchingApartments) {
+      try {
+        const res = await fetch("http://192.168.0.197:5000/roommates");
+        const data = await res.json();
+        setRoommatesCache(data);
+      } catch (err) {
+        console.error("Failed to fetch roommates:", err);
+      } finally {
+        setIsFetchingRoommates(false);
+      }
+    };
+
+    const fetchApartments = async () => {
       setIsFetchingApartments(true);
-      fetch("x")
-        .then((res) => res.json())
-        .then((data) => setApartmentsCache(data))
-        .catch((err) => console.error("Failed to fetch apartments:", err))
-        .finally(() => setIsFetchingApartments(false));
+      try {
+        const res = await fetch("http://192.168.0.197:5000/apartments");
+        const data = await res.json();
+        setApartmentsCache(data);
+      } catch (err) {
+        console.error("Failed to fetch apartments:", err);
+      } finally {
+        setIsFetchingApartments(false);
+      }
+    };
+
+    if (activeTab === "Roommates" && roommatesCache === null && !isFetchingRoommates) {
+      fetchRoommates();
+    } else if (activeTab === "Apartments" && apartmentsCache === null && !isFetchingApartments) {
+      fetchApartments();
     }
   }, [activeTab, roommatesCache, apartmentsCache, isFetchingRoommates, isFetchingApartments]);
 
@@ -160,8 +176,8 @@ export default function Home() {
           <TouchableOpacity
             onPress={() => setActiveTab("Roommates")}
             className={`flex-1 items-center rounded-full border py-3 ${activeTab === "Roommates"
-                ? "border-emerald-400 bg-emerald-400"
-                : "border-gray-300 bg-white"
+              ? "border-emerald-400 bg-emerald-400"
+              : "border-gray-300 bg-white"
               }`}
           >
             <Text
@@ -175,8 +191,8 @@ export default function Home() {
           <TouchableOpacity
             onPress={() => setActiveTab("Apartments")}
             className={`flex-1 items-center rounded-full border py-3 ${activeTab === "Apartments"
-                ? "border-emerald-400 bg-emerald-400"
-                : "border-gray-300 bg-white"
+              ? "border-emerald-400 bg-emerald-400"
+              : "border-gray-300 bg-white"
               }`}
           >
             <Text
@@ -191,19 +207,19 @@ export default function Home() {
         {/* Content – conditionally render based on active tab */}
         {activeTab === "Roommates"
           ? displayRoommates.map((roommate) => (
-              <RoommateCard
-                key={roommate.id}
-                roommate={roommate}
-                onPress={() => router.push(`/roommate/${roommate.id}`)}
-              />
-            ))
+            <RoommateCard
+              key={roommate.id}
+              roommate={roommate}
+              onPress={() => router.push(`/roommate/${roommate.id}`)}
+            />
+          ))
           : displayApartments.map((apartment) => (
-              <ApartmentCard
-                key={apartment.id}
-                apartment={apartment}
-                onPress={() => router.push(`/apartment/${apartment.id}`)}
-              />
-            ))}
+            <ApartmentCard
+              key={apartment.id}
+              apartment={apartment}
+              onPress={() => router.push(`/apartment/${apartment.id}`)}
+            />
+          ))}
       </ScrollView>
 
       {/* Bottom Navigation Bar */}
