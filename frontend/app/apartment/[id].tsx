@@ -79,7 +79,7 @@ export default function ApartmentDetail() {
               Owner's Profile
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity className="flex-row items-center gap-2 rounded-full bg-emerald-400 px-5 py-2.5">
+          <TouchableOpacity className="flex-row items-center gap-2 rounded-full bg-brand px-5 py-2.5">
             <Text className="text-sm font-semibold text-white">
               Message owner
             </Text>

@@ -36,7 +36,7 @@ export default function QuizIntro() {
 
       {/* Let's go button */}
       <TouchableOpacity
-        className="mb-12 items-center rounded-full bg-emerald-300/80 py-4"
+        className="mb-12 items-center rounded-full bg-brand py-4"
         onPress={handleLetsGo}
       >
         <Text className="text-base font-semibold text-white">Let's go!</Text>

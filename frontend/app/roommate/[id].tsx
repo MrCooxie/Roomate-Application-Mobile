@@ -46,7 +46,7 @@ export default function RoommateDetail() {
             />
           </View>
           {/* Compatibility badge – positioned at top-right outside the rounded image slightly */}
-          <View className="absolute -top-2 -right-2 h-14 w-14 items-center justify-center rounded-full bg-emerald-400">
+          <View className="absolute -top-2 -right-2 h-14 w-14 items-center justify-center rounded-full bg-brand">
             <Text className="text-sm font-bold text-white">
               {roommate.compatibility}%
             </Text>
