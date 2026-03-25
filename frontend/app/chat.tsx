@@ -103,7 +103,7 @@ export default function Chat() {
             onPress={() => setActiveTab("Messages")}
             className={`flex-1 items-center rounded-full border py-3 ${
               activeTab === "Messages"
-                ? "border-emerald-400 bg-emerald-400"
+                ? "border-brand bg-brand"
                 : "border-gray-300 bg-white"
             }`}
           >
@@ -120,7 +120,7 @@ export default function Chat() {
             onPress={() => setActiveTab("Matches")}
             className={`flex-1 items-center rounded-full border py-3 ${
               activeTab === "Matches"
-                ? "border-emerald-400 bg-emerald-400"
+                ? "border-brand bg-brand"
                 : "border-gray-300 bg-white"
             }`}
           >

@@ -36,7 +36,7 @@ export default function Settings() {
         {/* Edit Profile Button */}
         <View className="mb-5 items-center">
           <TouchableOpacity
-            className="flex-row items-center rounded-full border border-emerald-400 bg-emerald-400 px-8 py-3"
+            className="flex-row items-center rounded-full border border-brand bg-brand px-8 py-3"
             onPress={() => router.push("/profile" as any)}
           >
             <Text className="mr-2 text-base font-semibold text-white">

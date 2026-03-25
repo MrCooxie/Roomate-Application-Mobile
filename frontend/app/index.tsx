@@ -21,7 +21,7 @@ const { width } = Dimensions.get("window");
 // ─── Shared components ───────────────────────────────────────────────
 
 function CompatibilityBadge({ value }: { value: number }) {
-  const bgColor = value >= 70 ? "bg-emerald-400" : "bg-yellow-600/80";
+  const bgColor = value >= 70 ? "bg-brand" : "bg-yellow-600/80";
 
   return (
     <View
@@ -176,7 +176,7 @@ export default function Home() {
           <TouchableOpacity
             onPress={() => setActiveTab("Roommates")}
             className={`flex-1 items-center rounded-full border py-3 ${activeTab === "Roommates"
-              ? "border-emerald-400 bg-emerald-400"
+              ? "border-brand bg-brand"
               : "border-gray-300 bg-white"
               }`}
           >
@@ -191,7 +191,7 @@ export default function Home() {
           <TouchableOpacity
             onPress={() => setActiveTab("Apartments")}
             className={`flex-1 items-center rounded-full border py-3 ${activeTab === "Apartments"
-              ? "border-emerald-400 bg-emerald-400"
+              ? "border-brand bg-brand"
               : "border-gray-300 bg-white"
               }`}
           >

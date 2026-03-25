@@ -106,7 +106,7 @@ export default function QuizProfile() {
             </Text>
             <Ionicons name="pencil" size={18} color="#111827" />
           </View>
-          <View className="mb-6 rounded-3xl bg-emerald-100/60 px-5 py-4">
+          <View className="mb-6 rounded-3xl bg-brand-light/40 px-5 py-4">
             <TextInput
               placeholder="Tell us about yourself..."
               placeholderTextColor="#9ca3af"
@@ -124,7 +124,7 @@ export default function QuizProfile() {
         {/* Next button */}
         <View className="px-8 pb-10">
           <TouchableOpacity
-            className="items-center rounded-full bg-emerald-300/80 py-4"
+            className="items-center rounded-full bg-brand py-4"
             onPress={handleNext}
           >
             <Text className="text-base font-semibold text-white">Next</Text>

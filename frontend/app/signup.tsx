@@ -20,7 +20,7 @@ export default function Signup() {
 
   return (
     <LinearGradient
-      colors={["#c3e8c1", "#dfffde", "#ffffff"]}
+      colors={["#8EC19D", "#b8d8c2", "#ffffff"]}
       start={{ x: 0.5, y: 0 }}
       end={{ x: 0.5, y: 1 }}
       style={{ flex: 1 }}
@@ -101,7 +101,7 @@ export default function Signup() {
 
           {/* Get started button */}
           <TouchableOpacity
-            className="mb-6 items-center rounded-full bg-emerald-300/80 py-4"
+            className="mb-6 items-center rounded-full bg-brand py-4"
             onPress={() => router.push("/quiz-intro" as any)}
           >
             <Text className="text-base font-semibold text-white">Get started</Text>

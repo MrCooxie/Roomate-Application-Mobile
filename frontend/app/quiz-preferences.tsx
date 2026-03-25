@@ -90,7 +90,7 @@ export default function QuizPreferences() {
         </Text>
 
         {/* Search */}
-        <View className="mb-6 rounded-full bg-emerald-100/60 px-5 py-3">
+        <View className="mb-6 rounded-full bg-brand-light/40 px-5 py-3">
           <TextInput
             placeholder="Search"
             placeholderTextColor="#9ca3af"
@@ -115,7 +115,7 @@ export default function QuizPreferences() {
                 <Switch
                   value={!!selected[option]}
                   onValueChange={() => toggle(option)}
-                  trackColor={{ false: "#d1d5db", true: "#6ee7b7" }}
+                  trackColor={{ false: "#d1d5db", true: "#8EC19D" }}
                   thumbColor="#fff"
                 />
               </View>
@@ -133,7 +133,7 @@ export default function QuizPreferences() {
           <Text className="text-base font-semibold text-gray-700">Back</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          className="flex-1 items-center rounded-full bg-emerald-300/80 py-4"
+          className="flex-1 items-center rounded-full bg-brand py-4"
           onPress={handleNext}
         >
           <Text className="text-base font-semibold text-white">Next</Text>
