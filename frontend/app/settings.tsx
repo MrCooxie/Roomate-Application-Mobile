@@ -7,16 +7,17 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import ScreenLayout from "../components/ScreenLayout";
 import "../global.css";
 
 export default function Settings() {
   const router = useRouter();
 
   return (
-    <View className="flex-1 bg-white">
+    <ScreenLayout activeRoute="settings">
       <ScrollView
         className="flex-1 px-5"
-        contentContainerStyle={{ paddingTop: 60, paddingBottom: 100 }}
+        contentContainerStyle={{ paddingTop: 20, paddingBottom: 100 }}
         showsVerticalScrollIndicator={false}
       >
         {/* Title */}
@@ -28,8 +29,8 @@ export default function Settings() {
         <View className="mb-4 items-center">
           <Image
             source={require("../assets/images/avatar_profile.png")}
-            className="h-28 w-28 rounded-full"
-            style={{ resizeMode: "cover" }}
+            style={{ width: 112, height: 112, borderRadius: 56 }}
+            resizeMode="cover"
           />
         </View>
 
@@ -66,25 +67,6 @@ export default function Settings() {
         {/* Divider */}
         <View className="mx-4 h-px bg-gray-200" />
       </ScrollView>
-
-      {/* Bottom Navigation Bar */}
-      <View className="absolute bottom-0 left-0 right-0 flex-row items-center justify-around border-t border-gray-200 bg-white pb-6 pt-3">
-        <TouchableOpacity
-          className="items-center"
-          onPress={() => router.push("/" as any)}
-        >
-          <Ionicons name="home" size={26} color="#9ca3af" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          className="items-center"
-          onPress={() => router.push("/chat" as any)}
-        >
-          <Ionicons name="chatbubble" size={26} color="#9ca3af" />
-        </TouchableOpacity>
-        <TouchableOpacity className="items-center">
-          <Ionicons name="settings-sharp" size={26} color="#111827" />
-        </TouchableOpacity>
-      </View>
-    </View>
+    </ScreenLayout>
   );
 }

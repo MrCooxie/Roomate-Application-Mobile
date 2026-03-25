@@ -1,10 +1,13 @@
-import { View, Text, Image, ScrollView, TouchableOpacity, Dimensions } from "react-native";
+import { View, Text, Image, ScrollView, TouchableOpacity, Platform, Dimensions } from "react-native";
+
+const screenWidth = Dimensions.get("window").width;
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { ROOMMATES } from "../../data/roommates";
+import ScreenLayout from "../../components/ScreenLayout";
 import "../../global.css";
 
-const { width } = Dimensions.get("window");
+import { getImageUri } from "../../utils/getImageUri";
 
 export default function RoommateDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -20,10 +23,10 @@ export default function RoommateDetail() {
   }
 
   return (
-    <View className="flex-1 bg-white">
+    <ScreenLayout activeRoute="home">
       <ScrollView
         className="flex-1"
-        contentContainerStyle={{ paddingTop: 50, paddingBottom: 100 }}
+        contentContainerStyle={{ paddingTop: 20, paddingBottom: 100 }}
         showsVerticalScrollIndicator={false}
       >
         {/* Header – back button + "Meet Name" */}
@@ -37,19 +40,32 @@ export default function RoommateDetail() {
         </View>
 
         {/* Profile photo with compatibility badge */}
-        <View className="mx-8 mb-5">
+        <View className="mx-auto mb-5 w-full max-w-md px-8">
           <View className="relative overflow-hidden rounded-3xl">
-            <Image
-              source={roommate.image}
-              className="w-full rounded-3xl"
-              style={{ height: width - 64, resizeMode: "cover" }}
-            />
-          </View>
-          {/* Compatibility badge – positioned at top-right outside the rounded image slightly */}
-          <View className="absolute -top-2 -right-2 h-14 w-14 items-center justify-center rounded-full bg-brand">
-            <Text className="text-sm font-bold text-white">
-              {roommate.compatibility}%
-            </Text>
+            {Platform.OS === "web" ? (
+              <View
+                style={{
+                  width: "100%",
+                  aspectRatio: 3 / 4,
+                  backgroundImage: `url(${getImageUri(roommate.image)})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center top",
+                  borderRadius: 24,
+                } as any}
+              />
+            ) : (
+              <Image
+                source={roommate.image}
+                style={{ width: screenWidth - 64, height: screenWidth - 64, borderRadius: 24 }}
+                resizeMode="cover"
+              />
+            )}
+            {/* Compatibility badge */}
+            <View className="absolute top-3 right-3 h-14 w-14 items-center justify-center rounded-full bg-brand">
+              <Text className="text-sm font-bold text-white">
+                {roommate.compatibility}%
+              </Text>
+            </View>
           </View>
         </View>
 
@@ -105,19 +121,6 @@ export default function RoommateDetail() {
           ))}
         </View>
       </ScrollView>
-
-      {/* Bottom Navigation Bar */}
-      <View className="absolute bottom-0 left-0 right-0 flex-row items-center justify-around border-t border-gray-200 bg-white pb-6 pt-3">
-        <TouchableOpacity className="items-center">
-          <Ionicons name="home" size={26} color="#111827" />
-        </TouchableOpacity>
-        <TouchableOpacity className="items-center">
-          <Ionicons name="chatbubble" size={26} color="#9ca3af" />
-        </TouchableOpacity>
-        <TouchableOpacity className="items-center">
-          <Ionicons name="settings-sharp" size={26} color="#9ca3af" />
-        </TouchableOpacity>
-      </View>
-    </View>
+    </ScreenLayout>
   );
 }

@@ -1,18 +1,17 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
-import { useAuth } from "../context/auth";
 import "../global.css";
 
 export default function QuizIntro() {
   const router = useRouter();
-  const { setIsLoggedIn } = useAuth();
 
   const handleLetsGo = () => {
     router.push("/quiz-profile" as any);
   };
 
   return (
-    <View className="flex-1 bg-white px-8" style={{ paddingTop: 70 }}>
+    <View className="flex-1 items-center bg-white" style={{ paddingTop: 70 }}>
+      <View style={{ width: "100%", maxWidth: 430, paddingHorizontal: 32, flex: 1 }}>
       {/* App name */}
       <Text className="mb-8 text-center text-3xl font-bold italic text-gray-900">
         Roomy.
@@ -41,6 +40,7 @@ export default function QuizIntro() {
       >
         <Text className="text-base font-semibold text-white">Let's go!</Text>
       </TouchableOpacity>
+      </View>
     </View>
   );
 }

@@ -92,10 +92,11 @@ export default function QuizApartment() {
   return (
     <View className="flex-1 bg-white">
       <ScrollView
-        className="flex-1 px-8"
-        contentContainerStyle={{ paddingTop: 60, paddingBottom: 20 }}
+        className="flex-1"
+        contentContainerStyle={{ paddingTop: 60, paddingBottom: 20, alignItems: "center" }}
         showsVerticalScrollIndicator={false}
       >
+        <View style={{ width: "100%", maxWidth: 430, paddingHorizontal: 32 }}>
         {/* Title */}
         <Text className="mb-6 text-center text-2xl font-bold text-gray-900">
           Requirements
@@ -139,10 +140,12 @@ export default function QuizApartment() {
             ))}
           </View>
         ))}
+        </View>
       </ScrollView>
 
       {/* Bottom buttons */}
-      <View className="flex-row gap-3 px-8 pb-10 pt-3">
+      <View className="items-center pb-10 pt-3">
+        <View style={{ width: "100%", maxWidth: 430, paddingHorizontal: 32 }} className="flex-row gap-3">
         <TouchableOpacity
           className="flex-1 items-center rounded-full border border-gray-300 bg-gray-100 py-4"
           onPress={() => router.back()}
@@ -155,6 +158,7 @@ export default function QuizApartment() {
         >
           <Text className="text-base font-semibold text-white">Next</Text>
         </TouchableOpacity>
+        </View>
       </View>
     </View>
   );

@@ -8,10 +8,13 @@ import {
   Platform,
   ScrollView,
 } from "react-native";
+
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import "../global.css";
+
+const Wrapper = Platform.OS === "web" ? View : KeyboardAvoidingView;
 
 export default function Signup() {
   const [email, setEmail] = useState("");
@@ -25,15 +28,16 @@ export default function Signup() {
       end={{ x: 0.5, y: 1 }}
       style={{ flex: 1 }}
     >
-      <KeyboardAvoidingView
+      <Wrapper
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         className="flex-1"
       >
         <ScrollView
-          contentContainerStyle={{ flexGrow: 1, justifyContent: "center", paddingHorizontal: 32 }}
+          contentContainerStyle={{ flexGrow: 1, justifyContent: "center", alignItems: "center" }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
+          <View style={{ width: "100%", maxWidth: 430, paddingHorizontal: 32 }}>
           {/* App name */}
           <Text className="mb-12 text-center text-4xl font-bold italic text-gray-900">
             Roomy.
@@ -113,8 +117,9 @@ export default function Signup() {
               Already have an account?
             </Text>
           </TouchableOpacity>
+          </View>
         </ScrollView>
-      </KeyboardAvoidingView>
+      </Wrapper>
     </LinearGradient>
   );
 }

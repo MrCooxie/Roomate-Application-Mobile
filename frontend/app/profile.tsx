@@ -4,13 +4,16 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
+  Platform,
   Dimensions,
 } from "react-native";
+
+const screenWidth = Dimensions.get("window").width;
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import ScreenLayout from "../components/ScreenLayout";
+import { getImageUri } from "../utils/getImageUri";
 import "../global.css";
-
-const { width } = Dimensions.get("window");
 
 const INTERESTS = [
   { label: "Dance", icon: "accessibility" as const },
@@ -23,10 +26,10 @@ export default function Profile() {
   const router = useRouter();
 
   return (
-    <View className="flex-1 bg-white">
+    <ScreenLayout activeRoute="settings">
       <ScrollView
         className="flex-1 px-5"
-        contentContainerStyle={{ paddingTop: 50, paddingBottom: 100 }}
+        contentContainerStyle={{ paddingTop: 20, paddingBottom: 100 }}
         showsVerticalScrollIndicator={false}
       >
         {/* Header with back button + title */}
@@ -41,12 +44,25 @@ export default function Profile() {
         </View>
 
         {/* Profile Photo */}
-        <View className="mb-5 items-center">
-          <Image
-            source={require("../assets/images/profile_photo.png")}
-            className="w-full rounded-2xl"
-            style={{ height: width - 64, resizeMode: "cover" }}
-          />
+        <View className="mx-auto mb-5 w-full max-w-md items-center">
+          {Platform.OS === "web" ? (
+            <View
+              style={{
+                width: "100%",
+                aspectRatio: 3 / 4,
+                backgroundImage: `url(${getImageUri(require("../assets/images/profile_photo.png"))})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center top",
+                borderRadius: 16,
+              } as any}
+            />
+          ) : (
+            <Image
+              source={require("../assets/images/profile_photo.png")}
+              style={{ width: screenWidth - 40, height: screenWidth - 40, borderRadius: 16 }}
+              resizeMode="cover"
+            />
+          )}
         </View>
 
         {/* Name */}
@@ -102,28 +118,6 @@ export default function Profile() {
           ))}
         </View>
       </ScrollView>
-
-      {/* Bottom Navigation Bar */}
-      <View className="absolute bottom-0 left-0 right-0 flex-row items-center justify-around border-t border-gray-200 bg-white pb-6 pt-3">
-        <TouchableOpacity
-          className="items-center"
-          onPress={() => router.push("/" as any)}
-        >
-          <Ionicons name="home" size={26} color="#9ca3af" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          className="items-center"
-          onPress={() => router.push("/chat" as any)}
-        >
-          <Ionicons name="chatbubble" size={26} color="#9ca3af" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          className="items-center"
-          onPress={() => router.push("/settings" as any)}
-        >
-          <Ionicons name="settings-sharp" size={26} color="#9ca3af" />
-        </TouchableOpacity>
-      </View>
-    </View>
+    </ScreenLayout>
   );
 }

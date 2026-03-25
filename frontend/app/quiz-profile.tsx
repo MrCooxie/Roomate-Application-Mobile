@@ -8,9 +8,12 @@ import {
   Platform,
   ScrollView,
 } from "react-native";
+
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import "../global.css";
+
+const Wrapper = Platform.OS === "web" ? View : KeyboardAvoidingView;
 
 export default function QuizProfile() {
   const [name, setName] = useState("");
@@ -26,16 +29,17 @@ export default function QuizProfile() {
 
   return (
     <View className="flex-1 bg-white">
-      <KeyboardAvoidingView
+      <Wrapper
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         className="flex-1"
       >
         <ScrollView
-          className="flex-1 px-8"
-          contentContainerStyle={{ paddingTop: 60, paddingBottom: 40 }}
+          className="flex-1"
+          contentContainerStyle={{ paddingTop: 60, paddingBottom: 40, alignItems: "center" }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
+          <View style={{ width: "100%", maxWidth: 430, paddingHorizontal: 32 }}>
           {/* Name */}
           <Text className="mb-2 text-base font-semibold text-gray-900">
             Name
@@ -119,18 +123,21 @@ export default function QuizProfile() {
               style={{ minHeight: 160, lineHeight: 24 }}
             />
           </View>
+          </View>
         </ScrollView>
 
         {/* Next button */}
-        <View className="px-8 pb-10">
+        <View className="items-center pb-10">
+          <View style={{ width: "100%", maxWidth: 430, paddingHorizontal: 32 }}>
           <TouchableOpacity
             className="items-center rounded-full bg-brand py-4"
             onPress={handleNext}
           >
             <Text className="text-base font-semibold text-white">Next</Text>
           </TouchableOpacity>
+          </View>
         </View>
-      </KeyboardAvoidingView>
+      </Wrapper>
     </View>
   );
 }
