@@ -1,10 +1,9 @@
-import { View, Text, Image, ScrollView, TouchableOpacity, Dimensions } from "react-native";
+import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { APARTMENTS } from "../../data/apartments";
+import ScreenLayout from "../../components/ScreenLayout";
 import "../../global.css";
-
-const { width } = Dimensions.get("window");
 
 export default function ApartmentDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -20,10 +19,10 @@ export default function ApartmentDetail() {
   }
 
   return (
-    <View className="flex-1 bg-white">
+    <ScreenLayout activeRoute="home">
       <ScrollView
         className="flex-1"
-        contentContainerStyle={{ paddingTop: 50, paddingBottom: 40 }}
+        contentContainerStyle={{ paddingTop: 20, paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
       >
         {/* Header – back button + address */}
@@ -43,7 +42,7 @@ export default function ApartmentDetail() {
           <Image
             source={apartment.image}
             className="w-full rounded-2xl"
-            style={{ height: width * 0.6, resizeMode: "cover" }}
+            style={{ aspectRatio: 5 / 3, resizeMode: "cover" }}
           />
         </View>
 
@@ -109,6 +108,6 @@ export default function ApartmentDetail() {
           </View>
         </View>
       </ScrollView>
-    </View>
+    </ScreenLayout>
   );
 }

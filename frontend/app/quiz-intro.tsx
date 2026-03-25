@@ -1,11 +1,9 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
-import { useAuth } from "../context/auth";
 import "../global.css";
 
 export default function QuizIntro() {
   const router = useRouter();
-  const { setIsLoggedIn } = useAuth();
 
   const handleLetsGo = () => {
     router.push("/quiz-profile" as any);

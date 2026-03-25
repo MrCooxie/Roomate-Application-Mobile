@@ -9,10 +9,13 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
+
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { CONVERSATIONS, Message } from "../../data/messages";
 import "../../global.css";
+
+const Wrapper = Platform.OS === "web" ? View : KeyboardAvoidingView;
 
 // ─── Chat bubble ─────────────────────────────────────────────────────
 
@@ -48,7 +51,7 @@ export default function ConversationDetail() {
   }
 
   return (
-    <KeyboardAvoidingView
+    <Wrapper
       className="flex-1 bg-white"
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={0}
@@ -100,6 +103,6 @@ export default function ConversationDetail() {
           <Ionicons name="send" size={24} color="#34d399" />
         </TouchableOpacity>
       </View>
-    </KeyboardAvoidingView>
+    </Wrapper>
   );
 }

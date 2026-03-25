@@ -8,10 +8,13 @@ import {
   Platform,
   ScrollView,
 } from "react-native";
+
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import "../global.css";
+
+const Wrapper = Platform.OS === "web" ? View : KeyboardAvoidingView;
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -25,7 +28,7 @@ export default function Login() {
       end={{ x: 0.5, y: 1 }}
       style={{ flex: 1 }}
     >
-      <KeyboardAvoidingView
+      <Wrapper
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         className="flex-1"
       >
@@ -114,7 +117,7 @@ export default function Login() {
             </Text>
           </TouchableOpacity>
         </ScrollView>
-      </KeyboardAvoidingView>
+      </Wrapper>
     </LinearGradient>
   );
 }

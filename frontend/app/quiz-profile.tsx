@@ -8,9 +8,12 @@ import {
   Platform,
   ScrollView,
 } from "react-native";
+
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import "../global.css";
+
+const Wrapper = Platform.OS === "web" ? View : KeyboardAvoidingView;
 
 export default function QuizProfile() {
   const [name, setName] = useState("");
@@ -26,7 +29,7 @@ export default function QuizProfile() {
 
   return (
     <View className="flex-1 bg-white">
-      <KeyboardAvoidingView
+      <Wrapper
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         className="flex-1"
       >
@@ -130,7 +133,7 @@ export default function QuizProfile() {
             <Text className="text-base font-semibold text-white">Next</Text>
           </TouchableOpacity>
         </View>
-      </KeyboardAvoidingView>
+      </Wrapper>
     </View>
   );
 }

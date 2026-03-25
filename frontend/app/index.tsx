@@ -5,15 +5,14 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
-  Dimensions,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { APARTMENTS, Apartment } from "../data/apartments";
 import { ROOMMATES, Roommate } from "../data/roommates";
+import { useResponsiveColumns } from "../hooks/useResponsiveColumns";
+import ScreenLayout from "../components/ScreenLayout";
 import "../global.css";
-
-const { width } = Dimensions.get("window");
 
 // Roommate data imported from ../data/roommates
 // Apartment data imported from ../data/apartments
@@ -48,7 +47,7 @@ function RoommateCard({ roommate, onPress }: { roommate: Roommate; onPress: () =
         <Image
           source={roommate.image}
           className="w-full rounded-2xl"
-          style={{ height: width - 64, resizeMode: "cover" }}
+          style={{ aspectRatio: 1, resizeMode: "cover" }}
         />
       </View>
 
@@ -86,7 +85,7 @@ function ApartmentCard({ apartment, onPress }: { apartment: Apartment; onPress: 
         <Image
           source={apartment.image}
           className="w-full rounded-2xl"
-          style={{ height: width - 64, resizeMode: "cover" }}
+          style={{ aspectRatio: 1, resizeMode: "cover" }}
         />
       </View>
 
@@ -116,6 +115,7 @@ type Tab = "Roommates" | "Apartments";
 export default function Home() {
   const [activeTab, setActiveTab] = useState<Tab>("Roommates");
   const router = useRouter();
+  const { columns, cardWidth } = useResponsiveColumns();
 
   const [roommatesCache, setRoommatesCache] = useState<Roommate[] | null>(null);
   const [apartmentsCache, setApartmentsCache] = useState<Apartment[] | null>(null);
@@ -160,10 +160,10 @@ export default function Home() {
   const displayApartments = apartmentsCache || APARTMENTS;
 
   return (
-    <View className="flex-1 bg-white">
+    <ScreenLayout activeRoute="home">
       <ScrollView
         className="flex-1 px-5"
-        contentContainerStyle={{ paddingTop: 60, paddingBottom: 100 }}
+        contentContainerStyle={{ paddingTop: 20, paddingBottom: 100 }}
         showsVerticalScrollIndicator={false}
       >
         {/* Title – changes based on active tab */}
@@ -204,36 +204,27 @@ export default function Home() {
           </TouchableOpacity>
         </View>
 
-        {/* Content – conditionally render based on active tab */}
-        {activeTab === "Roommates"
-          ? displayRoommates.map((roommate) => (
-            <RoommateCard
-              key={roommate.id}
-              roommate={roommate}
-              onPress={() => router.push(`/roommate/${roommate.id}`)}
-            />
-          ))
-          : displayApartments.map((apartment) => (
-            <ApartmentCard
-              key={apartment.id}
-              apartment={apartment}
-              onPress={() => router.push(`/apartment/${apartment.id}`)}
-            />
-          ))}
+        {/* Content – grid on web, single column on mobile */}
+        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 16 }}>
+          {activeTab === "Roommates"
+            ? displayRoommates.map((roommate) => (
+              <View key={roommate.id} style={columns > 1 ? { width: cardWidth } : { width: "100%" }}>
+                <RoommateCard
+                  roommate={roommate}
+                  onPress={() => router.push(`/roommate/${roommate.id}`)}
+                />
+              </View>
+            ))
+            : displayApartments.map((apartment) => (
+              <View key={apartment.id} style={columns > 1 ? { width: cardWidth } : { width: "100%" }}>
+                <ApartmentCard
+                  apartment={apartment}
+                  onPress={() => router.push(`/apartment/${apartment.id}`)}
+                />
+              </View>
+            ))}
+        </View>
       </ScrollView>
-
-      {/* Bottom Navigation Bar */}
-      <View className="absolute bottom-0 left-0 right-0 flex-row items-center justify-around border-t border-gray-200 bg-white pb-6 pt-3">
-        <TouchableOpacity className="items-center">
-          <Ionicons name="home" size={26} color="#111827" />
-        </TouchableOpacity>
-        <TouchableOpacity className="items-center" onPress={() => router.push("/chat" as any)}>
-          <Ionicons name="chatbubble" size={26} color="#9ca3af" />
-        </TouchableOpacity>
-        <TouchableOpacity className="items-center" onPress={() => router.push("/settings" as any)}>
-          <Ionicons name="settings-sharp" size={26} color="#9ca3af" />
-        </TouchableOpacity>
-      </View>
-    </View>
+    </ScreenLayout>
   );
 }

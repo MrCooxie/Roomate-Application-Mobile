@@ -1,10 +1,9 @@
-import { View, Text, Image, ScrollView, TouchableOpacity, Dimensions } from "react-native";
+import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { ROOMMATES } from "../../data/roommates";
+import ScreenLayout from "../../components/ScreenLayout";
 import "../../global.css";
-
-const { width } = Dimensions.get("window");
 
 export default function RoommateDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -20,10 +19,10 @@ export default function RoommateDetail() {
   }
 
   return (
-    <View className="flex-1 bg-white">
+    <ScreenLayout activeRoute="home">
       <ScrollView
         className="flex-1"
-        contentContainerStyle={{ paddingTop: 50, paddingBottom: 100 }}
+        contentContainerStyle={{ paddingTop: 20, paddingBottom: 100 }}
         showsVerticalScrollIndicator={false}
       >
         {/* Header – back button + "Meet Name" */}
@@ -42,7 +41,7 @@ export default function RoommateDetail() {
             <Image
               source={roommate.image}
               className="w-full rounded-3xl"
-              style={{ height: width - 64, resizeMode: "cover" }}
+              style={{ aspectRatio: 1, resizeMode: "cover" }}
             />
           </View>
           {/* Compatibility badge – positioned at top-right outside the rounded image slightly */}
@@ -105,19 +104,6 @@ export default function RoommateDetail() {
           ))}
         </View>
       </ScrollView>
-
-      {/* Bottom Navigation Bar */}
-      <View className="absolute bottom-0 left-0 right-0 flex-row items-center justify-around border-t border-gray-200 bg-white pb-6 pt-3">
-        <TouchableOpacity className="items-center">
-          <Ionicons name="home" size={26} color="#111827" />
-        </TouchableOpacity>
-        <TouchableOpacity className="items-center">
-          <Ionicons name="chatbubble" size={26} color="#9ca3af" />
-        </TouchableOpacity>
-        <TouchableOpacity className="items-center">
-          <Ionicons name="settings-sharp" size={26} color="#9ca3af" />
-        </TouchableOpacity>
-      </View>
-    </View>
+    </ScreenLayout>
   );
 }

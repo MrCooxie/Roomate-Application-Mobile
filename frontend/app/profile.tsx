@@ -4,13 +4,11 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
-  Dimensions,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import ScreenLayout from "../components/ScreenLayout";
 import "../global.css";
-
-const { width } = Dimensions.get("window");
 
 const INTERESTS = [
   { label: "Dance", icon: "accessibility" as const },
@@ -23,10 +21,10 @@ export default function Profile() {
   const router = useRouter();
 
   return (
-    <View className="flex-1 bg-white">
+    <ScreenLayout activeRoute="settings">
       <ScrollView
         className="flex-1 px-5"
-        contentContainerStyle={{ paddingTop: 50, paddingBottom: 100 }}
+        contentContainerStyle={{ paddingTop: 20, paddingBottom: 100 }}
         showsVerticalScrollIndicator={false}
       >
         {/* Header with back button + title */}
@@ -45,7 +43,7 @@ export default function Profile() {
           <Image
             source={require("../assets/images/profile_photo.png")}
             className="w-full rounded-2xl"
-            style={{ height: width - 64, resizeMode: "cover" }}
+            style={{ aspectRatio: 1, resizeMode: "cover" }}
           />
         </View>
 
@@ -102,28 +100,6 @@ export default function Profile() {
           ))}
         </View>
       </ScrollView>
-
-      {/* Bottom Navigation Bar */}
-      <View className="absolute bottom-0 left-0 right-0 flex-row items-center justify-around border-t border-gray-200 bg-white pb-6 pt-3">
-        <TouchableOpacity
-          className="items-center"
-          onPress={() => router.push("/" as any)}
-        >
-          <Ionicons name="home" size={26} color="#9ca3af" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          className="items-center"
-          onPress={() => router.push("/chat" as any)}
-        >
-          <Ionicons name="chatbubble" size={26} color="#9ca3af" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          className="items-center"
-          onPress={() => router.push("/settings" as any)}
-        >
-          <Ionicons name="settings-sharp" size={26} color="#9ca3af" />
-        </TouchableOpacity>
-      </View>
-    </View>
+    </ScreenLayout>
   );
 }

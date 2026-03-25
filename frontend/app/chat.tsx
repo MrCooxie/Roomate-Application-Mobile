@@ -9,6 +9,7 @@ import {
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { CONVERSATIONS, Conversation } from "../data/messages";
+import ScreenLayout from "../components/ScreenLayout";
 import "../global.css";
 
 // ─── Conversation row ────────────────────────────────────────────────
@@ -86,10 +87,10 @@ export default function Chat() {
   const router = useRouter();
 
   return (
-    <View className="flex-1 bg-white">
+    <ScreenLayout activeRoute="chat">
       <ScrollView
         className="flex-1 px-5"
-        contentContainerStyle={{ paddingTop: 60, paddingBottom: 100 }}
+        contentContainerStyle={{ paddingTop: 20, paddingBottom: 100 }}
         showsVerticalScrollIndicator={false}
       >
         {/* Title */}
@@ -154,22 +155,6 @@ export default function Chat() {
           ))
         )}
       </ScrollView>
-
-      {/* Bottom Navigation Bar */}
-      <View className="absolute bottom-0 left-0 right-0 flex-row items-center justify-around border-t border-gray-200 bg-white pb-6 pt-3">
-        <TouchableOpacity
-          className="items-center"
-          onPress={() => router.push("/" as any)}
-        >
-          <Ionicons name="home" size={26} color="#9ca3af" />
-        </TouchableOpacity>
-        <TouchableOpacity className="items-center">
-          <Ionicons name="chatbubble" size={26} color="#111827" />
-        </TouchableOpacity>
-        <TouchableOpacity className="items-center" onPress={() => router.push("/settings" as any)}>
-          <Ionicons name="settings-sharp" size={26} color="#9ca3af" />
-        </TouchableOpacity>
-      </View>
-    </View>
+    </ScreenLayout>
   );
 }
