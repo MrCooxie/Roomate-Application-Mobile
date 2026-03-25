@@ -69,8 +69,8 @@ export default function ConversationDetail() {
         {/* Avatar */}
         <Image
           source={conversation.avatar}
-          className="mb-2 h-16 w-16 rounded-full"
-          style={{ resizeMode: "cover" }}
+          style={{ width: 64, height: 64, borderRadius: 32, marginBottom: 8 }}
+          resizeMode="cover"
         />
 
         {/* Name */}

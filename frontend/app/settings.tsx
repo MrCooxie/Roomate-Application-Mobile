@@ -29,8 +29,8 @@ export default function Settings() {
         <View className="mb-4 items-center">
           <Image
             source={require("../assets/images/avatar_profile.png")}
-            className="h-28 w-28 rounded-full"
-            style={{ resizeMode: "cover" }}
+            style={{ width: 112, height: 112, borderRadius: 56 }}
+            resizeMode="cover"
           />
         </View>
 

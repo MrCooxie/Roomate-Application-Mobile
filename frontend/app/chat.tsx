@@ -27,8 +27,8 @@ function ConversationRow({
         {/* Avatar */}
         <Image
           source={conversation.avatar}
-          className="mr-4 h-14 w-14 rounded-full"
-          style={{ resizeMode: "cover" }}
+          style={{ width: 56, height: 56, borderRadius: 28, marginRight: 16 }}
+          resizeMode="cover"
         />
 
         {/* Text content */}
@@ -57,8 +57,8 @@ function MatchRow({ conversation }: { conversation: Conversation }) {
         {/* Avatar */}
         <Image
           source={conversation.avatar}
-          className="mr-4 h-14 w-14 rounded-full"
-          style={{ resizeMode: "cover" }}
+          style={{ width: 56, height: 56, borderRadius: 28, marginRight: 16 }}
+          resizeMode="cover"
         />
 
         {/* Name */}

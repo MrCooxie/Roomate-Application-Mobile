@@ -4,10 +4,15 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
+  Platform,
+  Dimensions,
 } from "react-native";
+
+const screenWidth = Dimensions.get("window").width;
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import ScreenLayout from "../components/ScreenLayout";
+import { getImageUri } from "../utils/getImageUri";
 import "../global.css";
 
 const INTERESTS = [
@@ -39,12 +44,25 @@ export default function Profile() {
         </View>
 
         {/* Profile Photo */}
-        <View className="mb-5 items-center">
-          <Image
-            source={require("../assets/images/profile_photo.png")}
-            className="w-full rounded-2xl"
-            style={{ aspectRatio: 1, resizeMode: "cover" }}
-          />
+        <View className="mx-auto mb-5 w-full max-w-md items-center">
+          {Platform.OS === "web" ? (
+            <View
+              style={{
+                width: "100%",
+                aspectRatio: 3 / 4,
+                backgroundImage: `url(${getImageUri(require("../assets/images/profile_photo.png"))})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center top",
+                borderRadius: 16,
+              } as any}
+            />
+          ) : (
+            <Image
+              source={require("../assets/images/profile_photo.png")}
+              style={{ width: screenWidth - 40, height: screenWidth - 40, borderRadius: 16 }}
+              resizeMode="cover"
+            />
+          )}
         </View>
 
         {/* Name */}

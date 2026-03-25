@@ -33,10 +33,11 @@ export default function Login() {
         className="flex-1"
       >
         <ScrollView
-          contentContainerStyle={{ flexGrow: 1, justifyContent: "center", paddingHorizontal: 32 }}
+          contentContainerStyle={{ flexGrow: 1, justifyContent: "center", alignItems: "center" }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
+          <View style={{ width: "100%", maxWidth: 430, paddingHorizontal: 32 }}>
           {/* App name */}
           <Text className="mb-12 text-center text-4xl font-bold italic text-gray-900">
             Roomy.
@@ -116,6 +117,7 @@ export default function Login() {
               Don't have an account?
             </Text>
           </TouchableOpacity>
+          </View>
         </ScrollView>
       </Wrapper>
     </LinearGradient>

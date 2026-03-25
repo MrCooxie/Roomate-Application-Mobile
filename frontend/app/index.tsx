@@ -5,9 +5,13 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
+  Platform,
+  Dimensions,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+
+const screenWidth = Dimensions.get("window").width;
 import { APARTMENTS, Apartment } from "../data/apartments";
 import { ROOMMATES, Roommate } from "../data/roommates";
 import { useResponsiveColumns } from "../hooks/useResponsiveColumns";
@@ -16,6 +20,8 @@ import "../global.css";
 
 // Roommate data imported from ../data/roommates
 // Apartment data imported from ../data/apartments
+
+import { getImageUri } from "../utils/getImageUri";
 
 // ─── Shared components ───────────────────────────────────────────────
 
@@ -44,11 +50,24 @@ function RoommateCard({ roommate, onPress }: { roommate: Roommate; onPress: () =
 
       <View className="relative mb-3 overflow-hidden rounded-2xl">
         <CompatibilityBadge value={roommate.compatibility} />
-        <Image
-          source={roommate.image}
-          className="w-full rounded-2xl"
-          style={{ aspectRatio: 1, resizeMode: "cover" }}
-        />
+        {Platform.OS === "web" ? (
+          <View
+            style={{
+              width: "100%",
+              aspectRatio: 3 / 4,
+              backgroundImage: `url(${getImageUri(roommate.image)})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center top",
+              borderRadius: 16,
+            } as any}
+          />
+        ) : (
+          <Image
+            source={roommate.image}
+            style={{ width: screenWidth - 40, height: screenWidth - 40, borderRadius: 16 }}
+            resizeMode="cover"
+          />
+        )}
       </View>
 
       <View className="flex-row items-end justify-between">
@@ -82,11 +101,24 @@ function ApartmentCard({ apartment, onPress }: { apartment: Apartment; onPress: 
       </Text>
 
       <View className="relative mb-3 overflow-hidden rounded-2xl">
-        <Image
-          source={apartment.image}
-          className="w-full rounded-2xl"
-          style={{ aspectRatio: 1, resizeMode: "cover" }}
-        />
+        {Platform.OS === "web" ? (
+          <View
+            style={{
+              width: "100%",
+              aspectRatio: 1,
+              backgroundImage: `url(${getImageUri(apartment.image)})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center center",
+              borderRadius: 16,
+            } as any}
+          />
+        ) : (
+          <Image
+            source={apartment.image}
+            style={{ width: screenWidth - 40, height: screenWidth - 40, borderRadius: 16 }}
+            resizeMode="cover"
+          />
+        )}
       </View>
 
       <View className="flex-row items-end justify-between">

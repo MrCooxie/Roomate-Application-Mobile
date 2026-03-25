@@ -1,8 +1,9 @@
-import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, Image, ScrollView, TouchableOpacity, Platform } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { APARTMENTS } from "../../data/apartments";
 import ScreenLayout from "../../components/ScreenLayout";
+import { getImageUri } from "../../utils/getImageUri";
 import "../../global.css";
 
 export default function ApartmentDetail() {
@@ -38,12 +39,28 @@ export default function ApartmentDetail() {
         </View>
 
         {/* Apartment image */}
-        <View className="mx-5 mb-4 overflow-hidden rounded-2xl">
-          <Image
-            source={apartment.image}
-            className="w-full rounded-2xl"
-            style={{ aspectRatio: 5 / 3, resizeMode: "cover" }}
-          />
+        <View className="mx-auto mb-4 w-full max-w-lg px-5">
+          <View className="overflow-hidden rounded-2xl">
+            {Platform.OS === "web" ? (
+              <View
+                style={{
+                  width: "100%",
+                  aspectRatio: 5 / 3,
+                  backgroundImage: `url(${getImageUri(apartment.image)})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center center",
+                  borderRadius: 16,
+                } as any}
+              />
+            ) : (
+              <Image
+                source={apartment.image}
+                className="w-full rounded-2xl"
+                style={{ aspectRatio: 5 / 3 }}
+                resizeMode="cover"
+              />
+            )}
+          </View>
         </View>
 
         {/* Price */}
@@ -72,7 +89,8 @@ export default function ApartmentDetail() {
           <TouchableOpacity className="flex-row items-center gap-2 rounded-full border border-gray-300 px-4 py-2">
             <Image
               source={apartment.ownerAvatar}
-              className="h-7 w-7 rounded-full"
+              style={{ width: 28, height: 28, borderRadius: 14 }}
+              resizeMode="cover"
             />
             <Text className="text-sm font-medium text-gray-800">
               Owner's Profile
@@ -100,11 +118,25 @@ export default function ApartmentDetail() {
             <Text className="text-base font-semibold text-black">Location</Text>
           </View>
           <View className="w-full overflow-hidden rounded-2xl">
-            <Image
-              source={apartment.mapImage}
-              className="w-full rounded-2xl"
-              style={{ height: 200, resizeMode: "cover" }}
-            />
+            {Platform.OS === "web" ? (
+              <View
+                style={{
+                  width: "100%",
+                  height: 200,
+                  backgroundImage: `url(${getImageUri(apartment.mapImage)})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center center",
+                  borderRadius: 16,
+                } as any}
+              />
+            ) : (
+              <Image
+                source={apartment.mapImage}
+                className="w-full rounded-2xl"
+                style={{ height: 200 }}
+                resizeMode="cover"
+              />
+            )}
           </View>
         </View>
       </ScrollView>

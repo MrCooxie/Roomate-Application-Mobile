@@ -15,7 +15,7 @@ export default function ScreenLayout({ children, activeRoute }: Props) {
       {isWeb && <NavBar activeRoute={activeRoute} />}
       <View
         className="flex-1"
-        style={isWeb ? { paddingTop: 56 } : undefined}
+        style={isWeb ? { paddingTop: 64 } : undefined}
       >
         <View className="mx-auto w-full flex-1 md:max-w-3xl lg:max-w-5xl xl:max-w-6xl">
           {children}
