@@ -1,7 +1,7 @@
 import { View, Text, Image, ScrollView, TouchableOpacity, Platform } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { APARTMENTS } from "../../data/apartments";
+import { useData } from "../../context/data";
 import ScreenLayout from "../../components/ScreenLayout";
 import { getImageUri } from "../../utils/getImageUri";
 import "../../global.css";
@@ -9,7 +9,8 @@ import "../../global.css";
 export default function ApartmentDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const apartment = APARTMENTS.find((a) => a.id === id);
+  const { apartments } = useData();
+  const apartment = apartments.find((a) => a.id === id);
 
   if (!apartment) {
     return (
@@ -54,7 +55,7 @@ export default function ApartmentDetail() {
               />
             ) : (
               <Image
-                source={apartment.image}
+                source={typeof apartment.image === "string" ? { uri: apartment.image } : apartment.image}
                 className="w-full rounded-2xl"
                 style={{ aspectRatio: 5 / 3 }}
                 resizeMode="cover"
@@ -88,7 +89,7 @@ export default function ApartmentDetail() {
         <View className="mx-5 mb-6 flex-row items-center gap-3">
           <TouchableOpacity className="flex-row items-center gap-2 rounded-full border border-gray-300 px-4 py-2">
             <Image
-              source={apartment.ownerAvatar}
+              source={typeof apartment.ownerAvatar === "string" ? { uri: apartment.ownerAvatar } : apartment.ownerAvatar}
               style={{ width: 28, height: 28, borderRadius: 14 }}
               resizeMode="cover"
             />
@@ -131,7 +132,7 @@ export default function ApartmentDetail() {
               />
             ) : (
               <Image
-                source={apartment.mapImage}
+                source={typeof apartment.mapImage === "string" ? { uri: apartment.mapImage } : apartment.mapImage}
                 className="w-full rounded-2xl"
                 style={{ height: 200 }}
                 resizeMode="cover"

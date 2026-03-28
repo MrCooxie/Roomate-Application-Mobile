@@ -1,4 +1,5 @@
 import { View, Platform } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import NavBar from "./NavBar";
 import "../global.css";
 
@@ -11,7 +12,7 @@ export default function ScreenLayout({ children, activeRoute }: Props) {
   const isWeb = Platform.OS === "web";
 
   return (
-    <View className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white">
       {isWeb && <NavBar activeRoute={activeRoute} />}
       <View
         className="flex-1"
@@ -22,6 +23,6 @@ export default function ScreenLayout({ children, activeRoute }: Props) {
         </View>
       </View>
       {!isWeb && <NavBar activeRoute={activeRoute} />}
-    </View>
+    </SafeAreaView>
   );
 }

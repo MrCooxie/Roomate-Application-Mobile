@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
@@ -51,16 +52,17 @@ export default function ConversationDetail() {
   }
 
   return (
+    <SafeAreaView className="flex-1 bg-white">
     <Wrapper
-      className="flex-1 bg-white"
+      className="flex-1"
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={0}
     >
       {/* Header */}
-      <View className="items-center border-b border-gray-100 pb-4 pt-14">
+      <View className="items-center border-b border-gray-100 pb-4 pt-3">
         {/* Back button */}
         <TouchableOpacity
-          className="absolute left-5 top-14"
+          className="absolute left-5 top-3"
           onPress={() => router.back()}
         >
           <Ionicons name="chevron-back" size={28} color="#111827" />
@@ -104,5 +106,6 @@ export default function ConversationDetail() {
         </TouchableOpacity>
       </View>
     </Wrapper>
+    </SafeAreaView>
   );
 }

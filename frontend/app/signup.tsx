@@ -8,6 +8,7 @@ import {
   Platform,
   ScrollView,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
@@ -28,6 +29,7 @@ export default function Signup() {
       end={{ x: 0.5, y: 1 }}
       style={{ flex: 1 }}
     >
+    <SafeAreaView className="flex-1" style={{ flex: 1 }}>
       <Wrapper
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         className="flex-1"
@@ -120,6 +122,7 @@ export default function Signup() {
           </View>
         </ScrollView>
       </Wrapper>
+    </SafeAreaView>
     </LinearGradient>
   );
 }

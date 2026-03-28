@@ -1,5 +1,7 @@
 import { Stack, Redirect } from "expo-router";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { AuthProvider, useAuth } from "../context/auth";
+import { DataProvider } from "../context/data";
 
 function AppStack() {
   const { isLoggedIn } = useAuth();
@@ -20,14 +22,23 @@ function AppStack() {
     );
   }
 
-  return <Stack screenOptions={{ headerShown: false }} />;
+  return (
+    <>
+      <Stack screenOptions={{ headerShown: false }} />
+      <Redirect href="/" />
+    </>
+  );
 }
 
 export default function RootLayout() {
   return (
-    <AuthProvider>
-      <AppStack />
-    </AuthProvider>
+    <SafeAreaProvider>
+      <AuthProvider>
+        <DataProvider>
+          <AppStack />
+        </DataProvider>
+      </AuthProvider>
+    </SafeAreaProvider>
   );
 }
 

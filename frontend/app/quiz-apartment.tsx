@@ -7,6 +7,7 @@ import {
   ScrollView,
   Switch,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { useAuth } from "../context/auth";
 import "../global.css";
@@ -90,10 +91,10 @@ export default function QuizApartment() {
   })).filter((cat) => cat.options.length > 0);
 
   return (
-    <View className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white">
       <ScrollView
         className="flex-1"
-        contentContainerStyle={{ paddingTop: 60, paddingBottom: 20, alignItems: "center" }}
+        contentContainerStyle={{ paddingBottom: 20, alignItems: "center" }}
         showsVerticalScrollIndicator={false}
       >
         <View style={{ width: "100%", maxWidth: 430, paddingHorizontal: 32 }}>
@@ -160,6 +161,6 @@ export default function QuizApartment() {
         </TouchableOpacity>
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }

@@ -1,4 +1,5 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import "../global.css";
 
@@ -10,7 +11,7 @@ export default function QuizIntro() {
   };
 
   return (
-    <View className="flex-1 items-center bg-white" style={{ paddingTop: 70 }}>
+    <SafeAreaView className="flex-1 items-center bg-white">
       <View style={{ width: "100%", maxWidth: 430, paddingHorizontal: 32, flex: 1 }}>
       {/* App name */}
       <Text className="mb-8 text-center text-3xl font-bold italic text-gray-900">
@@ -41,6 +42,6 @@ export default function QuizIntro() {
         <Text className="text-base font-semibold text-white">Let's go!</Text>
       </TouchableOpacity>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }

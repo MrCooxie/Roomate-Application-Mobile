@@ -8,10 +8,12 @@ import {
   Platform,
   ScrollView,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { useAuth } from "../context/auth";
 import "../global.css";
 
 const Wrapper = Platform.OS === "web" ? View : KeyboardAvoidingView;
@@ -20,6 +22,7 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
+  const { setIsLoggedIn } = useAuth();
 
   return (
     <LinearGradient
@@ -28,6 +31,7 @@ export default function Login() {
       end={{ x: 0.5, y: 1 }}
       style={{ flex: 1 }}
     >
+    <SafeAreaView className="flex-1" style={{ flex: 1 }}>
       <Wrapper
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         className="flex-1"
@@ -106,7 +110,7 @@ export default function Login() {
           {/* Log in button */}
           <TouchableOpacity
             className="mb-6 items-center rounded-full bg-brand py-4"
-            onPress={() => router.push("/quiz-intro" as any)}
+            onPress={() => setIsLoggedIn(true)}
           >
             <Text className="text-base font-semibold text-white">Log in</Text>
           </TouchableOpacity>
@@ -120,6 +124,7 @@ export default function Login() {
           </View>
         </ScrollView>
       </Wrapper>
+    </SafeAreaView>
     </LinearGradient>
   );
 }

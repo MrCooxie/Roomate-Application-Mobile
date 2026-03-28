@@ -8,6 +8,7 @@ import {
   Platform,
   ScrollView,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -28,7 +29,7 @@ export default function QuizProfile() {
   };
 
   return (
-    <View className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white">
       <Wrapper
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         className="flex-1"
@@ -138,6 +139,6 @@ export default function QuizProfile() {
           </View>
         </View>
       </Wrapper>
-    </View>
+    </SafeAreaView>
   );
 }

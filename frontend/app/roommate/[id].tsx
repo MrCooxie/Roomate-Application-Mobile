@@ -3,7 +3,7 @@ import { View, Text, Image, ScrollView, TouchableOpacity, Platform, Dimensions }
 const screenWidth = Dimensions.get("window").width;
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { ROOMMATES } from "../../data/roommates";
+import { useData } from "../../context/data";
 import ScreenLayout from "../../components/ScreenLayout";
 import "../../global.css";
 
@@ -12,7 +12,8 @@ import { getImageUri } from "../../utils/getImageUri";
 export default function RoommateDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const roommate = ROOMMATES.find((r) => r.id === id);
+  const { roommates } = useData();
+  const roommate = roommates.find((r) => r.id === id);
 
   if (!roommate) {
     return (
@@ -55,7 +56,7 @@ export default function RoommateDetail() {
               />
             ) : (
               <Image
-                source={roommate.image}
+                source={typeof roommate.image === "string" ? { uri: roommate.image } : roommate.image}
                 style={{ width: screenWidth - 64, height: screenWidth - 64, borderRadius: 24 }}
                 resizeMode="cover"
               />

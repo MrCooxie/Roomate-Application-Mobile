@@ -33,6 +33,7 @@ class AirtableService:
             # In a real app, you'd use a logger here
             print(f"Error fetching Airtable records: {e}")
             return None
+            
 
     def get_user(self, id):
         return self.get_table_records("Users", id)
@@ -45,6 +46,9 @@ class AirtableService:
 
     def get_housing(self):
         return self.get_table_records("Housing")
+
+    def get_interests(self):
+        return self.get_table_records("Interests")
 
     #UPDATING
 

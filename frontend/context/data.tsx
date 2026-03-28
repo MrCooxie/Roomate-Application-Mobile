@@ -1,0 +1,42 @@
+import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { ROOMMATES, Roommate } from "../data/roommates";
+import { APARTMENTS, Apartment } from "../data/apartments";
+
+const API_BASE = "http://172.20.10.4:5000/api";
+
+type DataContextType = {
+  roommates: Roommate[];
+  apartments: Apartment[];
+};
+
+const DataContext = createContext<DataContextType>({
+  roommates: ROOMMATES,
+  apartments: APARTMENTS,
+});
+
+export function DataProvider({ children }: { children: ReactNode }) {
+  const [roommates, setRoommates] = useState<Roommate[]>(ROOMMATES);
+  const [apartments, setApartments] = useState<Apartment[]>(APARTMENTS);
+
+  useEffect(() => {
+    fetch(`${API_BASE}/roommates`)
+      .then((res) => res.json())
+      .then((data) => setRoommates(data))
+      .catch((err) => console.error("Failed to fetch roommates:", err));
+
+    fetch(`${API_BASE}/apartments`)
+      .then((res) => res.json())
+      .then((data) => setApartments(data))
+      .catch((err) => console.error("Failed to fetch apartments:", err));
+  }, []);
+
+  return (
+    <DataContext.Provider value={{ roommates, apartments }}>
+      {children}
+    </DataContext.Provider>
+  );
+}
+
+export function useData() {
+  return useContext(DataContext);
+}

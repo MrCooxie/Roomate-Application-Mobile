@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   View,
   Text,
@@ -12,14 +12,12 @@ import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
 const screenWidth = Dimensions.get("window").width;
-import { APARTMENTS, Apartment } from "../data/apartments";
-import { ROOMMATES, Roommate } from "../data/roommates";
+import { Apartment } from "../data/apartments";
+import { Roommate } from "../data/roommates";
 import { useResponsiveColumns } from "../hooks/useResponsiveColumns";
+import { useData } from "../context/data";
 import ScreenLayout from "../components/ScreenLayout";
 import "../global.css";
-
-// Roommate data imported from ../data/roommates
-// Apartment data imported from ../data/apartments
 
 import { getImageUri } from "../utils/getImageUri";
 
@@ -63,7 +61,7 @@ function RoommateCard({ roommate, onPress }: { roommate: Roommate; onPress: () =
           />
         ) : (
           <Image
-            source={roommate.image}
+            source={typeof roommate.image === "string" ? { uri: roommate.image } : roommate.image}
             style={{ width: screenWidth - 40, height: screenWidth - 40, borderRadius: 16 }}
             resizeMode="cover"
           />
@@ -114,7 +112,7 @@ function ApartmentCard({ apartment, onPress }: { apartment: Apartment; onPress: 
           />
         ) : (
           <Image
-            source={apartment.image}
+            source={typeof apartment.image === "string" ? { uri: apartment.image } : apartment.image}
             style={{ width: screenWidth - 40, height: screenWidth - 40, borderRadius: 16 }}
             resizeMode="cover"
           />
@@ -149,47 +147,7 @@ export default function Home() {
   const router = useRouter();
   const { columns, cardWidth } = useResponsiveColumns();
 
-  const [roommatesCache, setRoommatesCache] = useState<Roommate[] | null>(null);
-  const [apartmentsCache, setApartmentsCache] = useState<Apartment[] | null>(null);
-  const [isFetchingRoommates, setIsFetchingRoommates] = useState(false);
-  const [isFetchingApartments, setIsFetchingApartments] = useState(false);
-
-  useEffect(() => {
-    const fetchRoommates = async () => {
-      setIsFetchingRoommates(true);
-      try {
-        const res = await fetch("http://192.168.0.197:5000/roommates");
-        const data = await res.json();
-        setRoommatesCache(data);
-      } catch (err) {
-        console.error("Failed to fetch roommates:", err);
-      } finally {
-        setIsFetchingRoommates(false);
-      }
-    };
-
-    const fetchApartments = async () => {
-      setIsFetchingApartments(true);
-      try {
-        const res = await fetch("http://192.168.0.197:5000/apartments");
-        const data = await res.json();
-        setApartmentsCache(data);
-      } catch (err) {
-        console.error("Failed to fetch apartments:", err);
-      } finally {
-        setIsFetchingApartments(false);
-      }
-    };
-
-    if (activeTab === "Roommates" && roommatesCache === null && !isFetchingRoommates) {
-      fetchRoommates();
-    } else if (activeTab === "Apartments" && apartmentsCache === null && !isFetchingApartments) {
-      fetchApartments();
-    }
-  }, [activeTab, roommatesCache, apartmentsCache, isFetchingRoommates, isFetchingApartments]);
-
-  const displayRoommates = roommatesCache || ROOMMATES;
-  const displayApartments = apartmentsCache || APARTMENTS;
+  const { roommates: displayRoommates, apartments: displayApartments } = useData();
 
   return (
     <ScreenLayout activeRoute="home">
@@ -237,17 +195,22 @@ export default function Home() {
         </View>
 
         {/* Content – grid on web, single column on mobile */}
-        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 16 }}>
-          {activeTab === "Roommates"
-            ? displayRoommates.map((roommate) => (
+        {/* Both lists are always rendered; the inactive one is hidden to preserve image cache */}
+        <View style={activeTab !== "Roommates" ? { display: "none" } : undefined}>
+          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 16 }}>
+            {displayRoommates.map((roommate) => (
               <View key={roommate.id} style={columns > 1 ? { width: cardWidth } : { width: "100%" }}>
                 <RoommateCard
                   roommate={roommate}
                   onPress={() => router.push(`/roommate/${roommate.id}`)}
                 />
               </View>
-            ))
-            : displayApartments.map((apartment) => (
+            ))}
+          </View>
+        </View>
+        <View style={activeTab !== "Apartments" ? { display: "none" } : undefined}>
+          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 16 }}>
+            {displayApartments.map((apartment) => (
               <View key={apartment.id} style={columns > 1 ? { width: cardWidth } : { width: "100%" }}>
                 <ApartmentCard
                   apartment={apartment}
@@ -255,6 +218,7 @@ export default function Home() {
                 />
               </View>
             ))}
+          </View>
         </View>
       </ScrollView>
     </ScreenLayout>
