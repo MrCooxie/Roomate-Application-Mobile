@@ -10,6 +10,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { useAuth } from "../context/auth";
+import { useQuiz } from "../context/quiz";
 import "../global.css";
 
 type Category = {
@@ -71,6 +72,7 @@ const CATEGORIES: Category[] = [
 export default function QuizApartment() {
   const router = useRouter();
   const { setIsLoggedIn } = useAuth();
+  const { setApartmentPreferences, submit } = useQuiz();
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<Record<string, boolean>>({});
 
@@ -78,7 +80,13 @@ export default function QuizApartment() {
     setSelected((prev) => ({ ...prev, [option]: !prev[option] }));
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
+    setApartmentPreferences(Object.keys(selected).filter((key) => selected[key]));
+    try {
+      await submit();
+    } catch (err) {
+      console.error("Failed to submit quiz:", err);
+    }
     setIsLoggedIn(true);
     router.replace("/" as any);
   };

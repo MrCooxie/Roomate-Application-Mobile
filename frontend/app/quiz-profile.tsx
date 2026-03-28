@@ -12,6 +12,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { useQuiz } from "../context/quiz";
 import "../global.css";
 
 const Wrapper = Platform.OS === "web" ? View : KeyboardAvoidingView;
@@ -23,8 +24,10 @@ export default function QuizProfile() {
   const [city, setCity] = useState("");
   const [introduction, setIntroduction] = useState("");
   const router = useRouter();
+  const { setProfile } = useQuiz();
 
   const handleNext = () => {
+    setProfile({ name, age, school, city, introduction });
     router.push("/quiz-preferences" as any);
   };
 

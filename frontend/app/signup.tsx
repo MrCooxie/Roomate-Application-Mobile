@@ -13,6 +13,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { useQuiz } from "../context/quiz";
 import "../global.css";
 
 const Wrapper = Platform.OS === "web" ? View : KeyboardAvoidingView;
@@ -21,6 +22,7 @@ export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
+  const { setSignup } = useQuiz();
 
   return (
     <LinearGradient
@@ -108,7 +110,7 @@ export default function Signup() {
           {/* Get started button */}
           <TouchableOpacity
             className="mb-6 items-center rounded-full bg-brand py-4"
-            onPress={() => router.push("/quiz-intro" as any)}
+            onPress={() => { setSignup(email, password); router.push("/quiz-intro" as any); }}
           >
             <Text className="text-base font-semibold text-white">Get started</Text>
           </TouchableOpacity>

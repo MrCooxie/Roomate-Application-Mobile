@@ -2,6 +2,7 @@ import { Stack, Redirect } from "expo-router";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { AuthProvider, useAuth } from "../context/auth";
 import { DataProvider } from "../context/data";
+import { QuizProvider } from "../context/quiz";
 
 function AppStack() {
   const { isLoggedIn } = useAuth();
@@ -34,9 +35,11 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <AuthProvider>
-        <DataProvider>
-          <AppStack />
-        </DataProvider>
+        <QuizProvider>
+          <DataProvider>
+            <AppStack />
+          </DataProvider>
+        </QuizProvider>
       </AuthProvider>
     </SafeAreaProvider>
   );
