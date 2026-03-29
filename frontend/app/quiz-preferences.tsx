@@ -67,18 +67,17 @@ export default function QuizPreferences() {
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<Record<string, boolean>>({});
   const [customInterests, setCustomInterests] = useState<string[]>([]);
-  const [customInput, setCustomInput] = useState("");
 
   const toggle = (option: string) => {
     setSelected((prev) => ({ ...prev, [option]: !prev[option] }));
   };
 
-  const addCustomInterest = () => {
-    const trimmed = customInput.trim();
+  const addCustomInterest = (value?: string) => {
+    const trimmed = (value ?? search).trim();
     if (!trimmed || customInterests.length >= MAX_CUSTOM) return;
     if (customInterests.includes(trimmed)) return;
     setCustomInterests((prev) => [...prev, trimmed]);
-    setCustomInput("");
+    setSearch("");
   };
 
   const removeCustomInterest = (interest: string) => {
@@ -98,6 +97,21 @@ export default function QuizPreferences() {
     ),
   })).filter((cat) => cat.options.length > 0);
 
+  const allOptions = CATEGORIES.flatMap((cat) => cat.options);
+  const searchTrimmed = search.trim();
+  const hasNoResults = searchTrimmed.length > 0 && filtered.length === 0;
+  const isExistingOption = allOptions.some(
+    (opt) => opt.toLowerCase() === searchTrimmed.toLowerCase()
+  );
+  const isDuplicate = customInterests.some(
+    (i) => i.toLowerCase() === searchTrimmed.toLowerCase()
+  );
+  const canAddCustom =
+    hasNoResults &&
+    !isExistingOption &&
+    !isDuplicate &&
+    customInterests.length < MAX_CUSTOM;
+
   return (
     <SafeAreaView className="flex-1 bg-white">
       <ScrollView
@@ -112,7 +126,7 @@ export default function QuizPreferences() {
         </Text>
 
         {/* Search */}
-        <View className="mb-6 rounded-full bg-brand-light/40 px-5 py-3">
+        <View className="mb-3 rounded-full bg-brand-light/40 px-5 py-3">
           <TextInput
             placeholder="Search"
             placeholderTextColor="#9ca3af"
@@ -121,6 +135,44 @@ export default function QuizPreferences() {
             className="text-base text-gray-900"
           />
         </View>
+
+        {/* Custom interest tags */}
+        {customInterests.length > 0 && (
+          <View className="mb-3 flex-row flex-wrap gap-2">
+            {customInterests.map((interest) => (
+              <TouchableOpacity
+                key={interest}
+                onPress={() => removeCustomInterest(interest)}
+                className="flex-row items-center gap-1.5 rounded-full border border-brand bg-brand-light/30 px-4 py-2"
+              >
+                <Text className="text-sm text-gray-900">{interest}</Text>
+                <Text className="text-sm font-bold text-gray-500">✕</Text>
+              </TouchableOpacity>
+            ))}
+            <Text className="self-center text-xs text-gray-400">
+              {MAX_CUSTOM - customInterests.length}/{MAX_CUSTOM} remaining
+            </Text>
+          </View>
+        )}
+
+        {/* No results — offer to add as custom */}
+        {canAddCustom && (
+          <TouchableOpacity
+            className="mb-4 flex-row items-center justify-center gap-2 rounded-full border border-dashed border-brand py-3"
+            onPress={() => addCustomInterest()}
+          >
+            <Text className="text-base text-brand">+</Text>
+            <Text className="text-base text-gray-700">
+              Add "{searchTrimmed}" as custom interest
+            </Text>
+          </TouchableOpacity>
+        )}
+
+        {hasNoResults && !canAddCustom && customInterests.length >= MAX_CUSTOM && (
+          <Text className="mb-4 text-center text-sm text-gray-400">
+            No results found. Custom interest limit reached.
+          </Text>
+        )}
 
         {/* Categories */}
         {filtered.map((category) => (
@@ -145,51 +197,6 @@ export default function QuizPreferences() {
           </View>
         ))}
 
-        {/* Custom Interests */}
-        <View className="mb-6">
-          <Text className="mb-3 text-xl font-bold text-gray-900">
-            Custom interests
-          </Text>
-          <Text className="mb-3 text-sm text-gray-500">
-            Add up to {MAX_CUSTOM} of your own ({MAX_CUSTOM - customInterests.length} remaining)
-          </Text>
-
-          {/* Added custom interests */}
-          {customInterests.map((interest) => (
-            <View
-              key={interest}
-              className="mb-2 flex-row items-center justify-between rounded-full border border-brand bg-brand-light/30 px-5 py-3"
-            >
-              <Text className="text-base text-gray-900">{interest}</Text>
-              <TouchableOpacity onPress={() => removeCustomInterest(interest)}>
-                <Text className="text-lg font-bold text-gray-500">✕</Text>
-              </TouchableOpacity>
-            </View>
-          ))}
-
-          {/* Input to add new */}
-          {customInterests.length < MAX_CUSTOM && (
-            <View className="flex-row items-center gap-2">
-              <View className="flex-1 rounded-full border border-gray-300 px-5 py-3">
-                <TextInput
-                  placeholder="Type your interest..."
-                  placeholderTextColor="#9ca3af"
-                  value={customInput}
-                  onChangeText={setCustomInput}
-                  onSubmitEditing={addCustomInterest}
-                  returnKeyType="done"
-                  className="text-base text-gray-900"
-                />
-              </View>
-              <TouchableOpacity
-                className="items-center justify-center rounded-full bg-brand px-5 py-3"
-                onPress={addCustomInterest}
-              >
-                <Text className="text-base font-semibold text-white">Add</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-        </View>
         </View>
       </ScrollView>
 
