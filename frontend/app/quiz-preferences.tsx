@@ -59,18 +59,35 @@ const CATEGORIES: Category[] = [
   },
 ];
 
+const MAX_CUSTOM = 3;
+
 export default function QuizPreferences() {
   const router = useRouter();
   const { setPreferences } = useQuiz();
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<Record<string, boolean>>({});
+  const [customInterests, setCustomInterests] = useState<string[]>([]);
+  const [customInput, setCustomInput] = useState("");
 
   const toggle = (option: string) => {
     setSelected((prev) => ({ ...prev, [option]: !prev[option] }));
   };
 
+  const addCustomInterest = () => {
+    const trimmed = customInput.trim();
+    if (!trimmed || customInterests.length >= MAX_CUSTOM) return;
+    if (customInterests.includes(trimmed)) return;
+    setCustomInterests((prev) => [...prev, trimmed]);
+    setCustomInput("");
+  };
+
+  const removeCustomInterest = (interest: string) => {
+    setCustomInterests((prev) => prev.filter((i) => i !== interest));
+  };
+
   const handleNext = () => {
-    setPreferences(Object.keys(selected).filter((key) => selected[key]));
+    const toggled = Object.keys(selected).filter((key) => selected[key]);
+    setPreferences([...toggled, ...customInterests]);
     router.push("/quiz-apartment" as any);
   };
 
@@ -127,6 +144,52 @@ export default function QuizPreferences() {
             ))}
           </View>
         ))}
+
+        {/* Custom Interests */}
+        <View className="mb-6">
+          <Text className="mb-3 text-xl font-bold text-gray-900">
+            Custom interests
+          </Text>
+          <Text className="mb-3 text-sm text-gray-500">
+            Add up to {MAX_CUSTOM} of your own ({MAX_CUSTOM - customInterests.length} remaining)
+          </Text>
+
+          {/* Added custom interests */}
+          {customInterests.map((interest) => (
+            <View
+              key={interest}
+              className="mb-2 flex-row items-center justify-between rounded-full border border-brand bg-brand-light/30 px-5 py-3"
+            >
+              <Text className="text-base text-gray-900">{interest}</Text>
+              <TouchableOpacity onPress={() => removeCustomInterest(interest)}>
+                <Text className="text-lg font-bold text-gray-500">✕</Text>
+              </TouchableOpacity>
+            </View>
+          ))}
+
+          {/* Input to add new */}
+          {customInterests.length < MAX_CUSTOM && (
+            <View className="flex-row items-center gap-2">
+              <View className="flex-1 rounded-full border border-gray-300 px-5 py-3">
+                <TextInput
+                  placeholder="Type your interest..."
+                  placeholderTextColor="#9ca3af"
+                  value={customInput}
+                  onChangeText={setCustomInput}
+                  onSubmitEditing={addCustomInterest}
+                  returnKeyType="done"
+                  className="text-base text-gray-900"
+                />
+              </View>
+              <TouchableOpacity
+                className="items-center justify-center rounded-full bg-brand px-5 py-3"
+                onPress={addCustomInterest}
+              >
+                <Text className="text-base font-semibold text-white">Add</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
         </View>
       </ScrollView>
 
