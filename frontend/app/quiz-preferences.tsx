@@ -126,15 +126,18 @@ export default function QuizPreferences() {
         </Text>
 
         {/* Search */}
-        <View className="mb-3 rounded-full bg-brand-light/40 px-5 py-3">
+        <View className="mb-1 rounded-full bg-brand-light/40 px-5 py-3">
           <TextInput
-            placeholder="Search"
+            placeholder="Search or add your own interest..."
             placeholderTextColor="#9ca3af"
             value={search}
             onChangeText={setSearch}
             className="text-base text-gray-900"
           />
         </View>
+        <Text className="mb-3 px-2 text-xs text-gray-400">
+          Can't find what you're looking for? Type it and add it as a custom interest (up to {MAX_CUSTOM})
+        </Text>
 
         {/* Custom interest tags */}
         {customInterests.length > 0 && (
