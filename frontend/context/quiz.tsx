@@ -10,7 +10,7 @@ type QuizData = {
   school: string;
   city: string;
   introduction: string;
-  preferences: string[];
+  interests: string[];
   apartmentPreferences: string[];
 };
 
@@ -18,7 +18,7 @@ type QuizContextType = {
   data: QuizData;
   setSignup: (email: string, password: string) => void;
   setProfile: (profile: { name: string; age: string; school: string; city: string; introduction: string }) => void;
-  setPreferences: (preferences: string[]) => void;
+  setInterests: (interests: string[]) => void;
   setApartmentPreferences: (preferences: string[]) => void;
   submit: () => Promise<void>;
 };
@@ -31,7 +31,7 @@ const defaultData: QuizData = {
   school: "",
   city: "",
   introduction: "",
-  preferences: [],
+  interests: [],
   apartmentPreferences: [],
 };
 
@@ -39,7 +39,7 @@ const QuizContext = createContext<QuizContextType>({
   data: defaultData,
   setSignup: () => {},
   setProfile: () => {},
-  setPreferences: () => {},
+  setInterests: () => {},
   setApartmentPreferences: () => {},
   submit: async () => {},
 });
@@ -64,8 +64,8 @@ export function QuizProvider({ children }: { children: ReactNode }) {
     updateData((prev) => ({ ...prev, ...profile }));
   };
 
-  const setPreferences = (preferences: string[]) => {
-    updateData((prev) => ({ ...prev, preferences }));
+  const setInterests = (interests: string[]) => {
+    updateData((prev) => ({ ...prev, interests }));
   };
 
   const setApartmentPreferences = (apartmentPreferences: string[]) => {
@@ -82,7 +82,7 @@ export function QuizProvider({ children }: { children: ReactNode }) {
       school: current.school,
       city: current.city,
       introduction: current.introduction,
-      preferences: current.preferences,
+      interests: current.interests,
       apartmentPreferences: current.apartmentPreferences,
     };
 
@@ -100,7 +100,7 @@ export function QuizProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <QuizContext.Provider value={{ data, setSignup, setProfile, setPreferences, setApartmentPreferences, submit }}>
+    <QuizContext.Provider value={{ data, setSignup, setProfile, setInterests, setApartmentPreferences, submit }}>
       {children}
     </QuizContext.Provider>
   );

@@ -63,7 +63,7 @@ const MAX_CUSTOM = 3;
 
 export default function QuizPreferences() {
   const router = useRouter();
-  const { setPreferences } = useQuiz();
+  const { setInterests } = useQuiz();
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<Record<string, boolean>>({});
   const [customInterests, setCustomInterests] = useState<string[]>([]);
@@ -86,7 +86,7 @@ export default function QuizPreferences() {
 
   const handleNext = () => {
     const toggled = Object.keys(selected).filter((key) => selected[key]);
-    setPreferences([...toggled, ...customInterests]);
+    setInterests([...toggled, ...customInterests]);
     router.push("/quiz-apartment" as any);
   };
 
