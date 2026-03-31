@@ -4,7 +4,8 @@ import { API_BASE } from "../config";
 type QuizData = {
   email: string;
   password: string;
-  name: string;
+  firstName: string;
+  lastName: string;
   age: string;
   school: string;
   city: string;
@@ -16,7 +17,7 @@ type QuizData = {
 type QuizContextType = {
   data: QuizData;
   setSignup: (email: string, password: string) => void;
-  setProfile: (profile: { name: string; age: string; school: string; city: string; introduction: string }) => void;
+  setProfile: (profile: { firstName: string; lastName: string; age: string; school: string; city: string; introduction: string }) => void;
   setInterests: (interests: string[]) => void;
   setApartmentPreferences: (preferences: string[]) => void;
   submit: () => Promise<void>;
@@ -25,7 +26,8 @@ type QuizContextType = {
 const defaultData: QuizData = {
   email: "",
   password: "",
-  name: "",
+  firstName: "",
+  lastName: "",
   age: "",
   school: "",
   city: "",
@@ -59,7 +61,7 @@ export function QuizProvider({ children }: { children: ReactNode }) {
     updateData((prev) => ({ ...prev, email, password }));
   };
 
-  const setProfile = (profile: { name: string; age: string; school: string; city: string; introduction: string }) => {
+  const setProfile = (profile: { firstName: string; lastName: string; age: string; school: string; city: string; introduction: string }) => {
     updateData((prev) => ({ ...prev, ...profile }));
   };
 
@@ -76,7 +78,8 @@ export function QuizProvider({ children }: { children: ReactNode }) {
     const body = {
       email: current.email,
       password: current.password,
-      name: current.name,
+      firstName: current.firstName,
+      lastName: current.lastName,
       age: current.age,
       school: current.school,
       city: current.city,

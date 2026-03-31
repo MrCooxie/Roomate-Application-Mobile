@@ -18,7 +18,8 @@ import "../global.css";
 const Wrapper = Platform.OS === "web" ? View : KeyboardAvoidingView;
 
 export default function QuizProfile() {
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [age, setAge] = useState("");
   const [school, setSchool] = useState("");
   const [city, setCity] = useState("");
@@ -27,7 +28,7 @@ export default function QuizProfile() {
   const { setProfile } = useQuiz();
 
   const handleNext = () => {
-    setProfile({ name, age, school, city, introduction });
+    setProfile({ firstName, lastName, age, school, city, introduction });
     router.push("/quiz-preferences" as any);
   };
 
@@ -44,17 +45,31 @@ export default function QuizProfile() {
           showsVerticalScrollIndicator={false}
         >
           <View style={{ width: "100%", maxWidth: 430, paddingHorizontal: 32 }}>
-          {/* Name */}
+          {/* First Name */}
           <Text className="mb-2 text-base font-semibold text-gray-900">
-            Name
+            First Name
           </Text>
           <View className="mb-5 rounded-full border border-gray-300 px-5 py-3.5">
             <TextInput
-              placeholder="John Doe"
+              placeholder="John"
               placeholderTextColor="#9ca3af"
-              value={name}
-              onChangeText={setName}
-              className="text-base text-gray-900"
+              value={firstName}
+              onChangeText={setFirstName}
+              className="text-center text-base text-gray-900"
+            />
+          </View>
+
+          {/* Last Name */}
+          <Text className="mb-2 text-base font-semibold text-gray-900">
+            Last Name
+          </Text>
+          <View className="mb-5 rounded-full border border-gray-300 px-5 py-3.5">
+            <TextInput
+              placeholder="Doe"
+              placeholderTextColor="#9ca3af"
+              value={lastName}
+              onChangeText={setLastName}
+              className="text-center text-base text-gray-900"
             />
           </View>
 
@@ -69,7 +84,7 @@ export default function QuizProfile() {
               value={age}
               onChangeText={setAge}
               keyboardType="number-pad"
-              className="text-base text-gray-900"
+              className="text-center text-base text-gray-900"
             />
           </View>
 
@@ -86,7 +101,7 @@ export default function QuizProfile() {
               placeholderTextColor="#9ca3af"
               value={school}
               onChangeText={setSchool}
-              className="text-base text-gray-900"
+              className="text-center text-base text-gray-900"
             />
           </View>
 
@@ -103,7 +118,7 @@ export default function QuizProfile() {
               placeholderTextColor="#9ca3af"
               value={city}
               onChangeText={setCity}
-              className="text-base text-gray-900"
+              className="text-center text-base text-gray-900"
             />
           </View>
 

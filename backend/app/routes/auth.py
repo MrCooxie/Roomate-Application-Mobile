@@ -34,7 +34,8 @@ def register():
 
     email = data.get('email')
     password = data.get('password')
-    name = data.get('name', '')
+    first_name = data.get('firstName', '')
+    last_name = data.get('lastName', '')
     age = data.get('age', '')
     school = data.get('school', '')
     city = data.get('city', '')
@@ -44,11 +45,6 @@ def register():
 
     if not email or not password:
         return jsonify({"error": "Missing email or password"}), 400
-
-    # Split name into first/last
-    name_parts = name.strip().split(' ', 1)
-    first_name = name_parts[0] if name_parts else ''
-    last_name = name_parts[1] if len(name_parts) > 1 else ''
 
     # Build Airtable user record — only include fields that exist in the Users table
     user_data = {
