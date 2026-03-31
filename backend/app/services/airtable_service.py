@@ -58,6 +58,9 @@ class AirtableService:
         record["fields"]["id"] = id
         return record["fields"]
 
+    def get_interests(self):
+        return self.get_table_records("Interests")
+
     def get_user(self, id, user=None):
         from .compatibility import Algoritm
         info = self.get_table_records("Users", id)
