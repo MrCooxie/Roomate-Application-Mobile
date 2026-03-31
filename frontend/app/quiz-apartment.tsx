@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   ScrollView,
   Switch,
+  ActivityIndicator,
+  Modal,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
@@ -75,12 +77,15 @@ export default function QuizApartment() {
   const { setApartmentPreferences, submit } = useQuiz();
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<Record<string, boolean>>({});
+  const [loading, setLoading] = useState(false);
 
   const toggle = (option: string) => {
     setSelected((prev) => ({ ...prev, [option]: !prev[option] }));
   };
 
   const handleNext = async () => {
+    if (loading) return;
+    setLoading(true);
     setApartmentPreferences(Object.keys(selected).filter((key) => selected[key]));
     try {
       await submit();
@@ -169,6 +174,17 @@ export default function QuizApartment() {
         </TouchableOpacity>
         </View>
       </View>
+      {/* Loading overlay */}
+      <Modal visible={loading} transparent animationType="fade">
+        <View className="flex-1 items-center justify-center bg-black/40">
+          <View className="items-center rounded-3xl bg-white px-10 py-8">
+            <ActivityIndicator size="large" color="#8EC19D" />
+            <Text className="mt-4 text-base font-semibold text-gray-900">
+              Creating your account...
+            </Text>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
