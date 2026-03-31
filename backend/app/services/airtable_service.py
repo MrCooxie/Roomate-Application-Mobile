@@ -15,6 +15,19 @@ class AirtableService:
             print(f"Error creating Airtable records: {e}")
             return None
 
+    def _next_user_id(self):
+        """Return the next numeric user ID (max existing + 1)."""
+        records = self.get_table_records("Users") or []
+        max_id = 0
+        for r in records:
+            try:
+                val = int(r.get("fields", {}).get("id", 0))
+                if val > max_id:
+                    max_id = val
+            except (ValueError, TypeError):
+                pass
+        return max_id + 1
+
     def create_user_records(self, data):
         userInterests = []
         newInterests = []
@@ -31,6 +44,7 @@ class AirtableService:
                 userInterests.append(new_record["id"])
                 newInterests.append(new_record["id"])
         data["userInterests"] = userInterests
+        data["id"] = str(self._next_user_id())
         new_user = self.create_table_records("Users", data)
         for id in newInterests:
             self.update_interest_record({"Users": new_user["id"]}, id)

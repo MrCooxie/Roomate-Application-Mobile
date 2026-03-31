@@ -49,13 +49,14 @@ export default function QuizProfile() {
           <Text className="mb-2 text-base font-semibold text-gray-900">
             First Name
           </Text>
-          <View className="mb-5 rounded-full border border-gray-300 px-5 py-3.5">
+          <View className="mb-5 items-center justify-center rounded-full border border-gray-300 px-5 py-3.5">
             <TextInput
               placeholder="John"
               placeholderTextColor="#9ca3af"
               value={firstName}
               onChangeText={setFirstName}
-              className="text-center text-base text-gray-900"
+              textAlignVertical="center"
+              className="text-base text-gray-900"
             />
           </View>
 
@@ -63,13 +64,14 @@ export default function QuizProfile() {
           <Text className="mb-2 text-base font-semibold text-gray-900">
             Last Name
           </Text>
-          <View className="mb-5 rounded-full border border-gray-300 px-5 py-3.5">
+          <View className="mb-5 items-center justify-center rounded-full border border-gray-300 px-5 py-3.5">
             <TextInput
               placeholder="Doe"
               placeholderTextColor="#9ca3af"
               value={lastName}
               onChangeText={setLastName}
-              className="text-center text-base text-gray-900"
+              textAlignVertical="center"
+              className="text-base text-gray-900"
             />
           </View>
 
@@ -77,14 +79,15 @@ export default function QuizProfile() {
           <Text className="mb-2 text-base font-semibold text-gray-900">
             Age
           </Text>
-          <View className="mb-5 rounded-full border border-gray-300 px-5 py-3.5">
+          <View className="mb-5 items-center justify-center rounded-full border border-gray-300 px-5 py-3.5">
             <TextInput
               placeholder="18"
               placeholderTextColor="#9ca3af"
               value={age}
               onChangeText={setAge}
               keyboardType="number-pad"
-              className="text-center text-base text-gray-900"
+              textAlignVertical="center"
+              className="text-base text-gray-900"
             />
           </View>
 
@@ -95,13 +98,14 @@ export default function QuizProfile() {
             </Text>
             <Ionicons name="school" size={18} color="#111827" />
           </View>
-          <View className="mb-5 rounded-full border border-gray-300 px-5 py-3.5">
+          <View className="mb-5 items-center justify-center rounded-full border border-gray-300 px-5 py-3.5">
             <TextInput
               placeholder="University Of Tartu"
               placeholderTextColor="#9ca3af"
               value={school}
               onChangeText={setSchool}
-              className="text-center text-base text-gray-900"
+              textAlignVertical="center"
+              className="text-base text-gray-900"
             />
           </View>
 
@@ -112,13 +116,14 @@ export default function QuizProfile() {
             </Text>
             <Ionicons name="business" size={18} color="#111827" />
           </View>
-          <View className="mb-5 rounded-full border border-gray-300 px-5 py-3.5">
+          <View className="mb-5 items-center justify-center rounded-full border border-gray-300 px-5 py-3.5">
             <TextInput
               placeholder="Tartu"
               placeholderTextColor="#9ca3af"
               value={city}
               onChangeText={setCity}
-              className="text-center text-base text-gray-900"
+              textAlignVertical="center"
+              className="text-base text-gray-900"
             />
           </View>
 
