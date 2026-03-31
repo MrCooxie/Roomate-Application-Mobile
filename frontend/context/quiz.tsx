@@ -85,14 +85,18 @@ export function QuizProvider({ children }: { children: ReactNode }) {
       apartmentPreferences: current.apartmentPreferences,
     };
 
-    const res = await fetch(`${API_BASE}/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
+    try {
+      const res = await fetch(`${API_BASE}/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
 
-    if (!res.ok) {
-      throw new Error("Failed to register");
+      if (!res.ok) {
+        console.warn("Registration endpoint returned", res.status);
+      }
+    } catch (err) {
+      console.warn("Registration endpoint not available:", err);
     }
 
     updateData(() => defaultData);
