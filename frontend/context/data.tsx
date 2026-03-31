@@ -1,8 +1,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { ROOMMATES, Roommate } from "../data/roommates";
 import { APARTMENTS, Apartment } from "../data/apartments";
-
-const API_BASE = "http://172.20.10.4:5000/api";
+import { API_BASE } from "../config";
 
 type DataContextType = {
   roommates: Roommate[];

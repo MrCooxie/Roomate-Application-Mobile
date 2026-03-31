@@ -1,6 +1,5 @@
 import { createContext, useContext, useState, useRef, ReactNode } from "react";
-
-const API_BASE = "http://172.20.10.4:5000/api";
+import { API_BASE } from "../config";
 
 type QuizData = {
   email: string;
