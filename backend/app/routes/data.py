@@ -103,8 +103,3 @@ def get_housing():
 
     apartments = [_transform_apartment(r) for r in records]
     return jsonify(apartments), 200
-    
-@users_bp.route("/register", methods=["POST"])
-def register(data):
-    data["userInterests"] = data.pop("preferences")
-    return current_app.airtable.create_user_records(data)
