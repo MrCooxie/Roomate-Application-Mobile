@@ -22,7 +22,7 @@ def _get_interest_map():
     return interest_map
 
 
-def _transform_roommate(record, interest_map):
+def _transform_roommate(record, interest_map, user_id):
     """Transform an Airtable Users record into the frontend Roommate shape."""
     fields = record.get("fields", {})
 
@@ -44,7 +44,7 @@ def _transform_roommate(record, interest_map):
         "name": f"{fields.get('firstName', '')} {fields.get('lastName', '')}".strip(),
         "firstName": fields.get("firstName", ""),
         "age": fields.get("age", 0),
-        "compatibility": fields.get("compatibility", 0),
+        "compatibility": current_app.airtable.get_user(record["id"], user=user_id)["fields"]["compatibility"],
         "city": fields.get("city", ""),
         "university": fields.get("school", ""),
         "image": image,
@@ -84,14 +84,14 @@ def _transform_apartment(record):
     }
 
 
-@users_bp.route('/roommates', methods=['GET'])
-def get_users():
+@users_bp.route('/roommates', methods=["POST", "GET"])
+def get_users(user_id):
     records = current_app.airtable.get_users()
     if records is None:
         return jsonify({"error": "Failed to fetch roommates"}), 500
 
     interest_map = _get_interest_map()
-    roommates = [_transform_roommate(r, interest_map) for r in records]
+    roommates = [_transform_roommate(r, interest_map, user_id) for r in records]
     return jsonify(roommates), 200
 
 
