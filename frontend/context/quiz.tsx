@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useRef, ReactNode } from "react";
 import { API_BASE } from "../config";
 
-type QuizData = {
+export type QuizData = {
   email: string;
   password: string;
   firstName: string;
@@ -14,13 +14,21 @@ type QuizData = {
   apartmentPreferences: string[];
 };
 
+export type RegisterResult = {
+  airtableId: string;
+  userId: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+} | null;
+
 type QuizContextType = {
   data: QuizData;
   setSignup: (email: string, password: string) => void;
   setProfile: (profile: { firstName: string; lastName: string; age: string; school: string; city: string; introduction: string }) => void;
   setInterests: (interests: string[]) => void;
   setApartmentPreferences: (preferences: string[]) => void;
-  submit: () => Promise<void>;
+  submit: () => Promise<RegisterResult>;
 };
 
 const defaultData: QuizData = {
@@ -42,7 +50,7 @@ const QuizContext = createContext<QuizContextType>({
   setProfile: () => {},
   setInterests: () => {},
   setApartmentPreferences: () => {},
-  submit: async () => {},
+  submit: async () => null,
 });
 
 export function QuizProvider({ children }: { children: ReactNode }) {
@@ -73,7 +81,7 @@ export function QuizProvider({ children }: { children: ReactNode }) {
     updateData((prev) => ({ ...prev, apartmentPreferences }));
   };
 
-  const submit = async () => {
+  const submit = async (): Promise<RegisterResult> => {
     const current = dataRef.current;
     const body = {
       email: current.email,
@@ -97,12 +105,23 @@ export function QuizProvider({ children }: { children: ReactNode }) {
 
       if (!res.ok) {
         console.warn("Registration endpoint returned", res.status);
+        return null;
       }
+
+      const responseData = await res.json();
+      return {
+        airtableId: responseData.airtable_id,
+        userId: responseData.user_id || "",
+        email: responseData.email || current.email,
+        firstName: responseData.firstName || current.firstName,
+        lastName: responseData.lastName || current.lastName,
+      };
     } catch (err) {
       console.warn("Registration endpoint not available:", err);
+      return null;
+    } finally {
+      updateData(() => defaultData);
     }
-
-    updateData(() => defaultData);
   };
 
   return (

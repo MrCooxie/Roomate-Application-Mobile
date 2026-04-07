@@ -7,6 +7,8 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Alert,
+  ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -14,6 +16,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useAuth } from "../context/auth";
+import { API_BASE } from "../config";
 import "../global.css";
 
 const Wrapper = Platform.OS === "web" ? View : KeyboardAvoidingView;
@@ -21,8 +24,40 @@ const Wrapper = Platform.OS === "web" ? View : KeyboardAvoidingView;
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { setIsLoggedIn } = useAuth();
+  const { login } = useAuth();
+
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert("Error", "Please enter email and password");
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_BASE}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        Alert.alert("Login failed", data.error || "Invalid credentials");
+        return;
+      }
+      login({
+        airtableId: data.airtable_id,
+        userId: data.user_id,
+        email: data.email,
+        firstName: data.firstName,
+        lastName: data.lastName,
+      });
+    } catch (err) {
+      Alert.alert("Error", "Could not connect to server");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <LinearGradient
@@ -110,9 +145,14 @@ export default function Login() {
           {/* Log in button */}
           <TouchableOpacity
             className="mb-6 items-center rounded-full bg-brand py-4"
-            onPress={() => setIsLoggedIn(true)}
+            onPress={handleLogin}
+            disabled={loading}
           >
-            <Text className="text-base font-semibold text-white">Log in</Text>
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text className="text-base font-semibold text-white">Log in</Text>
+            )}
           </TouchableOpacity>
 
           {/* Don't have an account */}

@@ -1,5 +1,4 @@
 from pyairtable import Api
-import random
 
 class AirtableService:
     def __init__(self, token, base_id):
@@ -28,26 +27,54 @@ class AirtableService:
                 pass
         return max_id + 1
 
-    def create_user_records(self, data):
-        userInterests = []
-        newInterests = []
-        for interest in data.pop("interests"):
-            interest = interest.lower()
-            inInterests = False
-            for record in self.get_table_records("Interests"):
-                if interest in record["fields"]["label"]:
-                    userInterests.append(record["id"])
-                    inInterests = True
+    def _match_linked_records(self, table_name, labels, create_missing=False):
+        """Match label strings to record IDs in a linked table.
+        Returns (matched_ids, newly_created_ids)."""
+        all_records = self.get_table_records(table_name) or []
+        matched = []
+        created = []
+        for label in labels:
+            label_lower = label.lower()
+            found = False
+            for record in all_records:
+                if label_lower == record["fields"].get("label", "").lower():
+                    matched.append(record["id"])
+                    found = True
                     break
-            if not inInterests:
-                new_record = self.create_table_records("Interests", {"label": interest})
-                userInterests.append(new_record["id"])
-                newInterests.append(new_record["id"])
-        data["userInterests"] = userInterests
+            if not found and create_missing:
+                new_record = self.create_table_records(table_name, {"label": label})
+                if new_record:
+                    matched.append(new_record["id"])
+                    created.append(new_record["id"])
+        return matched, created
+
+    def create_user_records(self, data):
+        # Process interests — create new ones if not found
+        interests = data.pop("interests", [])
+        interest_ids, new_interest_ids = self._match_linked_records(
+            "Interests", interests, create_missing=True
+        )
+        data["userInterests"] = interest_ids
+
+        # Process apartment preferences — only match existing predefined options
+        apt_prefs = data.pop("apartmentPreferences", [])
+        apt_pref_ids, _ = self._match_linked_records(
+            "ApartmentPreferences", apt_prefs, create_missing=False
+        )
+        data["userApartmentPreferences"] = apt_pref_ids
+
         data["id"] = str(self._next_user_id())
+
         new_user = self.create_table_records("Users", data)
-        for id in newInterests:
-            self.update_interest_record({"Users": new_user["id"]}, id)
+        if not new_user:
+            return None
+
+        # Link new interest records back to the user
+        for interest_id in new_interest_ids:
+            existing = self.get_table_records("Interests", interest_id)
+            existing_users = existing.get("fields", {}).get("Users", [])
+            existing_users.append(new_user["id"])
+            self.update_interest_record({"Users": existing_users}, interest_id)
         return new_user
 
     def create_room_records(self, data):
@@ -75,31 +102,6 @@ class AirtableService:
     def get_interests(self):
         return self.get_table_records("Interests")
 
-    def get_user(self, id, user=None):
-        from .compatibility import Algoritm
-        info = self.get_table_records("Users", id)
-        fields = info["fields"]
-
-        fields["name"] = str(fields["firstName"])+" "+str(fields["lastName"])
-        fields["university"] = fields.pop("school")
-        fields["image"] = fields.pop("profile picture")
-        fields["interests"] = []
-        for id in fields["userInterests"]:
-            fields["interests"].append(self.get_interest(id).pop("Users"))
-
-        # siin peaks võrdlema kasutava kasutajaga *algoritm*
-        if user:
-            userinfo = self.get_table_records("Users", user)
-            userint = userinfo["fields"]["userInterests"]
-            fields["compatibility"] = Algoritm(self, userint, fields["userInterests"])
-        else:
-            fields["compatibility"] = 0
-
-        #fields["compatibility"] = random.randint(0,100) #if have actual *algoritm* remove this
-
-        info["fields"] = fields
-        return info
-
     def get_owner(self, id):
         return self.get_table_records("Owners", id)
 
@@ -112,6 +114,9 @@ class AirtableService:
 
         info["fields"] = fields
         return info
+
+    def get_apartment_preferences(self):
+        return self.get_table_records("ApartmentPreferences")
 
     def get_users(self):
         return self.get_table_records("Users")

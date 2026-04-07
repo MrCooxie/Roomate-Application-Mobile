@@ -22,10 +22,6 @@ type Category = {
 
 const CATEGORIES: Category[] = [
   {
-    title: "Pricing",
-    options: ["Free", "Affordable", "Mid-range", "Expensive"],
-  },
-  {
     title: "Location",
     options: [
       "Central",
@@ -58,10 +54,6 @@ const CATEGORIES: Category[] = [
     ],
   },
   {
-    title: "Roommates",
-    options: ["Living alone", "1 roommate", "2 roommates", "3+ roommates"],
-  },
-  {
     title: "Lease",
     options: ["Short-term", "Long-term", "Month-to-month", "Flexible"],
   },
@@ -73,8 +65,8 @@ const CATEGORIES: Category[] = [
 
 export default function QuizApartment() {
   const router = useRouter();
-  const { setIsLoggedIn } = useAuth();
-  const { setApartmentPreferences, submit } = useQuiz();
+  const { login } = useAuth();
+  const { data: quizData, setApartmentPreferences, submit } = useQuiz();
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<Record<string, boolean>>({});
   const [loading, setLoading] = useState(false);
@@ -88,11 +80,19 @@ export default function QuizApartment() {
     setLoading(true);
     setApartmentPreferences(Object.keys(selected).filter((key) => selected[key]));
     try {
-      await submit();
+      const result = await submit();
+      if (result) {
+        login({
+          airtableId: result.airtableId,
+          userId: result.userId,
+          email: result.email,
+          firstName: result.firstName,
+          lastName: result.lastName,
+        });
+      }
     } catch (err) {
       console.error("Failed to submit quiz:", err);
     }
-    setIsLoggedIn(true);
     router.replace("/" as any);
   };
 
