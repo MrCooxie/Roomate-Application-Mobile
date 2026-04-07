@@ -22,7 +22,65 @@ def _get_interest_map():
     return interest_map
 
 
-def _transform_roommate(record, interest_map, current_user_interests):
+def _jaccard(set_a, set_b):
+    """Jaccard similarity between two sets, returns 0.0–1.0."""
+    if not set_a and not set_b:
+        return 0.0
+    a, b = set(set_a), set(set_b)
+    union = a | b
+    if not union:
+        return 0.0
+    return len(a & b) / len(union)
+
+
+def _calculate_compatibility(fields, current_user):
+    """Weighted multi-factor compatibility score (0–100).
+
+    Factors:
+      - Interests overlap (Jaccard):            50%
+      - Apartment preferences overlap (Jaccard): 30%
+      - Same city:                               10%
+      - Same school:                             10%
+    """
+    if not current_user:
+        return 0
+
+    # Interests — Jaccard on linked record IDs
+    interest_score = _jaccard(
+        fields.get("userInterests", []),
+        current_user.get("userInterests", []),
+    )
+
+    # Apartment preferences — Jaccard on linked record IDs
+    apt_score = _jaccard(
+        fields.get("userApartmentPreferences", []),
+        current_user.get("userApartmentPreferences", []),
+    )
+
+    # Same city bonus
+    city_score = 0.0
+    their_city = (fields.get("city") or "").strip().lower()
+    my_city = (current_user.get("city") or "").strip().lower()
+    if their_city and my_city and their_city == my_city:
+        city_score = 1.0
+
+    # Same school bonus
+    school_score = 0.0
+    their_school = (fields.get("school") or "").strip().lower()
+    my_school = (current_user.get("school") or "").strip().lower()
+    if their_school and my_school and their_school == my_school:
+        school_score = 1.0
+
+    total = (
+        interest_score * 50
+        + apt_score * 30
+        + city_score * 10
+        + school_score * 10
+    )
+    return round(total)
+
+
+def _transform_roommate(record, interest_map, current_user_fields):
     """Transform an Airtable Users record into the frontend Roommate shape."""
     fields = record.get("fields", {})
 
@@ -40,15 +98,7 @@ def _transform_roommate(record, interest_map, current_user_interests):
         if interest:
             interests.append(interest)
 
-    # Calculate compatibility using Jaccard similarity
-    compatibility = 0
-    if current_user_interests:
-        person_set = set(interest_ids)
-        user_set = set(current_user_interests)
-        shared = person_set & user_set
-        total = person_set | user_set
-        if total:
-            compatibility = round((len(shared) / len(total)) * 100)
+    compatibility = _calculate_compatibility(fields, current_user_fields)
 
     return {
         "id": fields.get("id", record["id"]),
@@ -109,12 +159,12 @@ def get_users():
     if records is None:
         return jsonify({"error": "Failed to fetch roommates"}), 500
 
-    # Fetch current user's interests once for compatibility calculation
-    current_user_interests = []
+    # Fetch current user's full fields for multi-factor compatibility
+    current_user_fields = None
     if user_id:
         user_record = current_app.airtable.get_table_records("Users", user_id)
         if user_record:
-            current_user_interests = user_record.get("fields", {}).get("userInterests", [])
+            current_user_fields = user_record.get("fields", {})
 
     interest_map = _get_interest_map()
     roommates = []
@@ -122,7 +172,10 @@ def get_users():
         # Skip the requesting user
         if user_id and r["id"] == user_id:
             continue
-        roommates.append(_transform_roommate(r, interest_map, current_user_interests))
+        roommates.append(_transform_roommate(r, interest_map, current_user_fields))
+
+    # Sort by compatibility descending so best matches appear first
+    roommates.sort(key=lambda x: x["compatibility"], reverse=True)
     return jsonify(roommates), 200
 
 

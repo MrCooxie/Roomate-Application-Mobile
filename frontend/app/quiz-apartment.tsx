@@ -22,10 +22,6 @@ type Category = {
 
 const CATEGORIES: Category[] = [
   {
-    title: "Pricing",
-    options: ["Free", "Affordable", "Mid-range", "Expensive"],
-  },
-  {
     title: "Location",
     options: [
       "Central",
@@ -56,10 +52,6 @@ const CATEGORIES: Category[] = [
       "Wi-Fi included",
       "Gym access",
     ],
-  },
-  {
-    title: "Roommates",
-    options: ["Living alone", "1 roommate", "2 roommates", "3+ roommates"],
   },
   {
     title: "Lease",
