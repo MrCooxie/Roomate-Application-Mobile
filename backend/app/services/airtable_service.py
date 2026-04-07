@@ -1,5 +1,4 @@
 from pyairtable import Api
-import random
 
 class AirtableService:
     def __init__(self, token, base_id):
@@ -35,7 +34,7 @@ class AirtableService:
             interest = interest.lower()
             inInterests = False
             for record in self.get_table_records("Interests"):
-                if interest in record["fields"]["label"]:
+                if interest == record["fields"]["label"].lower():
                     userInterests.append(record["id"])
                     inInterests = True
                     break
@@ -46,8 +45,11 @@ class AirtableService:
         data["userInterests"] = userInterests
         data["id"] = str(self._next_user_id())
         new_user = self.create_table_records("Users", data)
-        for id in newInterests:
-            self.update_interest_record({"Users": new_user["id"]}, id)
+        for interest_id in newInterests:
+            existing = self.get_table_records("Interests", interest_id)
+            existing_users = existing.get("fields", {}).get("Users", [])
+            existing_users.append(new_user["id"])
+            self.update_interest_record({"Users": existing_users}, interest_id)
         return new_user
 
     def create_room_records(self, data):
@@ -74,31 +76,6 @@ class AirtableService:
 
     def get_interests(self):
         return self.get_table_records("Interests")
-
-    def get_user(self, id, user=None):
-        from .compatibility import Algoritm
-        info = self.get_table_records("Users", id)
-        fields = info["fields"]
-
-        fields["name"] = str(fields["firstName"])+" "+str(fields["lastName"])
-        fields["university"] = fields.pop("school")
-        fields["image"] = fields.pop("profile picture")
-        fields["interests"] = []
-        for id in fields["userInterests"]:
-            fields["interests"].append(self.get_interest(id).pop("Users"))
-
-        # siin peaks võrdlema kasutava kasutajaga *algoritm*
-        if user:
-            userinfo = self.get_table_records("Users", user)
-            userint = userinfo["fields"]["userInterests"]
-            fields["compatibility"] = Algoritm(self, userint, fields["userInterests"])
-        else:
-            fields["compatibility"] = 0
-
-        #fields["compatibility"] = random.randint(0,100) #if have actual *algoritm* remove this
-
-        info["fields"] = fields
-        return info
 
     def get_owner(self, id):
         return self.get_table_records("Owners", id)

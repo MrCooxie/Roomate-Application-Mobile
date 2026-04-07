@@ -2,25 +2,25 @@ class AuthService:
     def __init__(self, airtable_service):
         self.airtable_service = airtable_service
 
-    def authenticate_user(self, username, password):
+    def authenticate_user(self, email, password):
         """
         Verify credentials against Airtable records.
         Returns the user record if valid, otherwise None.
         """
         users = self.airtable_service.get_users()
-        
+
         if not users:
             return None
 
-        # Look for a user matching the username and password
-        # Note: In a real app, passwords should be hashed!
         for user in users:
             fields = user.get('fields', {})
-            if fields.get('Username') == username and fields.get('Password') == password:
+            if fields.get('email') == email and fields.get('password') == password:
                 return {
-                    "id": user.get('id'),
-                    "username": fields.get('Username'),
-                    "email": fields.get('Email')
+                    "airtable_id": user.get('id'),
+                    "user_id": fields.get('id'),
+                    "email": fields.get('email'),
+                    "firstName": fields.get('firstName', ''),
+                    "lastName": fields.get('lastName', ''),
                 }
-        
+
         return None

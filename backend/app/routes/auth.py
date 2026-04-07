@@ -4,24 +4,25 @@ auth_bp = Blueprint('auth', __name__)
 
 @auth_bp.route('/login', methods=['POST'])
 def login():
-    # To access JSON data from the request body:
     data = request.get_json()
-    
-    # You can then access specific fields like this:
+
     email = data.get('email')
     password = data.get('password')
-    
-    # Basic validation example
+
     if not email or not password:
         return jsonify({"error": "Missing email or password"}), 400
 
-    # Use the injected AuthService
-    # user = current_app.auth.authenticate_user(username, password) # TODO: Implement authentication
-    
+    user = current_app.auth.authenticate_user(email, password)
+    if not user:
+        return jsonify({"error": "Invalid email or password"}), 401
+
     return jsonify({
         "message": "Login successful!",
-        "email": email,
-        "password": password
+        "airtable_id": user["airtable_id"],
+        "user_id": user["user_id"],
+        "email": user["email"],
+        "firstName": user["firstName"],
+        "lastName": user["lastName"],
     }), 200
 
 
@@ -46,16 +47,17 @@ def register():
     if not email or not password:
         return jsonify({"error": "Missing email or password"}), 400
 
-    # Build Airtable user record — only include fields that exist in the Users table
     user_data = {
         "email": email,
         "username": email,
+        "password": password,
         "firstName": first_name,
         "lastName": last_name,
         "age": int(age) if age else 0,
         "school": school,
         "city": city,
         "interests": interests,
+        "apartmentPreferences": apartment_preferences,
     }
 
     result = current_app.airtable.create_user_records(user_data)
@@ -63,7 +65,12 @@ def register():
     if not result:
         return jsonify({"error": "Failed to create user"}), 500
 
+    fields = result.get("fields", {})
     return jsonify({
         "message": "Registration successful",
-        "id": result.get("id"),
+        "airtable_id": result.get("id"),
+        "user_id": fields.get("id"),
+        "email": fields.get("email", email),
+        "firstName": fields.get("firstName", first_name),
+        "lastName": fields.get("lastName", last_name),
     }), 201

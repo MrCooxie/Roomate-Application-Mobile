@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, current_app
+from flask import Blueprint, jsonify, request, current_app
 
 users_bp = Blueprint('users', __name__)
 
@@ -22,7 +22,7 @@ def _get_interest_map():
     return interest_map
 
 
-def _transform_roommate(record, interest_map, user_id):
+def _transform_roommate(record, interest_map, current_user_interests):
     """Transform an Airtable Users record into the frontend Roommate shape."""
     fields = record.get("fields", {})
 
@@ -33,18 +33,29 @@ def _transform_roommate(record, interest_map, user_id):
         image = pics[0].get("url")
 
     # Resolve interests
+    interest_ids = fields.get("userInterests", [])
     interests = []
-    for interest_id in fields.get("userInterests", []):
+    for interest_id in interest_ids:
         interest = interest_map.get(interest_id)
         if interest:
             interests.append(interest)
+
+    # Calculate compatibility using Jaccard similarity
+    compatibility = 0
+    if current_user_interests:
+        person_set = set(interest_ids)
+        user_set = set(current_user_interests)
+        shared = person_set & user_set
+        total = person_set | user_set
+        if total:
+            compatibility = round((len(shared) / len(total)) * 100)
 
     return {
         "id": fields.get("id", record["id"]),
         "name": f"{fields.get('firstName', '')} {fields.get('lastName', '')}".strip(),
         "firstName": fields.get("firstName", ""),
         "age": fields.get("age", 0),
-        "compatibility": current_app.airtable.get_user(record["id"], user=user_id)["fields"]["compatibility"],
+        "compatibility": compatibility,
         "city": fields.get("city", ""),
         "university": fields.get("school", ""),
         "image": image,
@@ -85,13 +96,33 @@ def _transform_apartment(record):
 
 
 @users_bp.route('/roommates', methods=["POST", "GET"])
-def get_users(user_id):
+def get_users():
+    # Get user_id from query param (GET) or POST body
+    user_id = None
+    if request.method == "POST":
+        body = request.get_json(silent=True) or {}
+        user_id = body.get("user_id")
+    else:
+        user_id = request.args.get("user_id")
+
     records = current_app.airtable.get_users()
     if records is None:
         return jsonify({"error": "Failed to fetch roommates"}), 500
 
+    # Fetch current user's interests once for compatibility calculation
+    current_user_interests = []
+    if user_id:
+        user_record = current_app.airtable.get_table_records("Users", user_id)
+        if user_record:
+            current_user_interests = user_record.get("fields", {}).get("userInterests", [])
+
     interest_map = _get_interest_map()
-    roommates = [_transform_roommate(r, interest_map, user_id) for r in records]
+    roommates = []
+    for r in records:
+        # Skip the requesting user
+        if user_id and r["id"] == user_id:
+            continue
+        roommates.append(_transform_roommate(r, interest_map, current_user_interests))
     return jsonify(roommates), 200
 
 
@@ -103,3 +134,36 @@ def get_housing():
 
     apartments = [_transform_apartment(r) for r in records]
     return jsonify(apartments), 200
+
+
+@users_bp.route('/profile/<record_id>', methods=['GET'])
+def get_profile(record_id):
+    record = current_app.airtable.get_table_records("Users", record_id)
+    if not record:
+        return jsonify({"error": "User not found"}), 404
+
+    fields = record.get("fields", {})
+    interest_map = _get_interest_map()
+
+    image = None
+    pics = fields.get("profile picture", [])
+    if pics:
+        image = pics[0].get("url")
+
+    interests = []
+    for interest_id in fields.get("userInterests", []):
+        interest = interest_map.get(interest_id)
+        if interest:
+            interests.append(interest)
+
+    return jsonify({
+        "name": f"{fields.get('firstName', '')} {fields.get('lastName', '')}".strip(),
+        "firstName": fields.get("firstName", ""),
+        "lastName": fields.get("lastName", ""),
+        "age": fields.get("age", 0),
+        "city": fields.get("city", ""),
+        "university": fields.get("school", ""),
+        "email": fields.get("email", ""),
+        "image": image,
+        "interests": interests,
+    }), 200

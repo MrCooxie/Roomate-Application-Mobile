@@ -10,7 +10,7 @@ def create_app(config_name='dev'):
     app.config.from_object(config_by_name[config_name])
 
     # Initialize extensions
-    cors.init_app(app, resources={r"/api/*": {"origins": "http://localhost:5173"}})
+    cors.init_app(app, resources={r"/api/*": {"origins": "*"}})
 
     # Register Blueprints
     from .routes.health import health_bp
