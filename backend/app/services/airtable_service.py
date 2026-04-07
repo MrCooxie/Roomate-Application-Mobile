@@ -30,21 +30,31 @@ class AirtableService:
     def create_user_records(self, data):
         userInterests = []
         newInterests = []
-        for interest in data.pop("interests"):
-            interest = interest.lower()
-            inInterests = False
-            for record in self.get_table_records("Interests"):
-                if interest == record["fields"]["label"].lower():
+        interests = data.pop("interests", [])
+        for interest_label in interests:
+            interest_label = interest_label.lower()
+            found = False
+            for record in self.get_table_records("Interests") or []:
+                if interest_label == record["fields"]["label"].lower():
                     userInterests.append(record["id"])
-                    inInterests = True
+                    found = True
                     break
-            if not inInterests:
-                new_record = self.create_table_records("Interests", {"label": interest})
-                userInterests.append(new_record["id"])
-                newInterests.append(new_record["id"])
+            if not found:
+                new_record = self.create_table_records("Interests", {"label": interest_label})
+                if new_record:
+                    userInterests.append(new_record["id"])
+                    newInterests.append(new_record["id"])
         data["userInterests"] = userInterests
         data["id"] = str(self._next_user_id())
+
+        # Remove apartmentPreferences if present — it's a Multiple Select field
+        # that rejects unknown options without schema:write permission
+        data.pop("apartmentPreferences", None)
+
         new_user = self.create_table_records("Users", data)
+        if not new_user:
+            return None
+
         for interest_id in newInterests:
             existing = self.get_table_records("Interests", interest_id)
             existing_users = existing.get("fields", {}).get("Users", [])

@@ -57,8 +57,12 @@ def register():
         "school": school,
         "city": city,
         "interests": interests,
-        "apartmentPreferences": apartment_preferences,
     }
+
+    # apartmentPreferences is a Multiple Select field in Airtable —
+    # only include it if values are provided (they must match existing options)
+    if apartment_preferences:
+        user_data["apartmentPreferences"] = apartment_preferences
 
     result = current_app.airtable.create_user_records(user_data)
 
